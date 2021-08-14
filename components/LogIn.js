@@ -1,12 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native'
+import Authenticate from './LogIn/Authenticate'
+import CreateSystem from './LogIn/CreateSystem'
 
 const LogIn = (props) => {
 
   return (
     <View style={styles.logInView}>
-      <Text>Log-in Placeholder text</Text>
-      <Text>{props.loggedIn ? "True" : "False"}, {props.accountInit ? "True" : "False"}</Text>
+      { !props.loggedIn && <Authenticate request={props.request} promptAsync={props.promptAsync} /> }
+      { (props.loggedIn && !props.accountInit) && <CreateSystem initializeAccount={props.initializeAccount} /> }
     </View>
   );
 }

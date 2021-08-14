@@ -1,21 +1,22 @@
 import React from 'react';
-import { Image, StyleSheet, Text, View, TouchableHighlight } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Menu from './header/Menu'
+import Switch from './header/Switch'
 
 const Header = () => {
   return (
     <View style={styles.header}>
+      {/* MENU BUTTON */}
       <View style={styles.menuArea}>
-        <TouchableHighlight style={styles.switchButton} onPress={() => console.log('Menu button pressed')}>
-          <Image style={styles.menuImage} source={require("../assets/logo.png")} />
-        </TouchableHighlight>
+        <Menu />
       </View>
+      {/* TITLE AREA - SHOWS WHO IS FRONT */}
       <View style={styles.titleArea}>
         <Text style={styles.titleText}>Front: Unknown</Text>
       </View>
+      {/* SWITCH BUTTON */}
       <View style={styles.switchArea}>
-        <TouchableHighlight style={styles.switchButton} onPress={() => console.log('Switch button pressed')}>
-          <Text style={styles.switchButtonText}>Switch</Text>
-        </TouchableHighlight>
+        <Switch />
       </View>
     </View>
   );
@@ -34,27 +35,10 @@ const styles = StyleSheet.create({
     width: 75,
     backgroundColor: "purple",
   },
-  menuImage: {
-    height: 75,
-    width: 75,
-  },
-  menuButton: {
-    height: "100%",
-    width: "100%",
-  },
   switchArea: {
     height: "100%",
     width: 100,
     backgroundColor: "green"
-  },
-  switchButton: {
-    height: "100%",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  switchButtonText: {
-    fontSize: 20,
   },
   titleArea: {
     width: "100%",
