@@ -14,11 +14,11 @@ const CreateSystem = (props) => {
 
   const SubmitSystem = async () => {
     try {
-      context.db.collection('users').doc(context.userUID).set({ // Create doc with user's UID with two fields in it
+      context.db.collection('users').doc(context.user.uid).set({ // Create doc with user's UID with two fields in it
         systemName: systemName,
         accountInit: true
       }, {merge: true})
-      const dbUser = props.db.collection('users').doc(props.loggedIn)
+      const dbUser = context.db.collection('users').doc(context.user.uid)
       const initFront = await dbUser.collection('alters').add({ // create 'alters' collection inside user doc
         name: 'Unknown'
       })
@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   SubmitButton: {
-    backgroundColor: "teal",
+    backgroundColor: "teal", // TESTING BG COLOR
     height: 20,
   },
   InputField: {

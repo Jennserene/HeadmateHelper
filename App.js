@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
 import Header from './components/Header'
 import LogIn from './components/LogIn'
-import Chat from './components/Chat'
+import Main from './components/Main'
 import Context from './Context'
 
 // Initialize Firebase
@@ -23,23 +23,41 @@ const App = () => {
 
   // Set State
   const [loggedIn, setLoggedIn] = useState(null)
-  const [accountInit, setAccountInit] = useState(true)
-  const [page, setPage] = useState("chat")
+  const [accountInit, setAccountInit] = useState(false)
+  const [nav, setNav] = useState("chat")
+  const [frontName, setFrontName] = useState('Unknown')
+  const [frontID, setFrontID] = useState(null)
 
   // Check if user account is logged in
   useEffect( () => {
     const checkIfLoggedIn = () => {
       try {
         firebase.auth().onAuthStateChanged( async (user) => {
-          user ? setLoggedIn(user.uid) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user uid
-          const init = await db.collection("users").doc(user.uid).get().then(documentSnapshot => { // get document, THEN take snapshot of document
+          user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user uid
+          const dbUser = await db.collection("users").doc(user.uid)
+          const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
               return documentSnapshot.data().accountInit // if exists return value for accountInit
             } else {
               return false
             }
           })
-          setAccountInit(init) // If user account initialized, setAccountInit to true, otherwise set to false
+          if (init) {
+            setAccountInit(init) // If user account initialized, setAccountInit to true, otherwise set to false
+            const querySnapshot = await dbUser.collection('alters').where('name', '==', 'Unknown').get() // Get query of alters named Unknown
+            const alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
+            const alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
+            querySnapshot.forEach((doc) => {
+              alterIDs.push(doc.id) // add ids of alters named Unknown to array
+              alterNames.push(doc.get('name')) // add names of alters named Unknown to array
+            })
+            if (alterIDs.length == 1) {
+              setFrontID(alterIDs[0]) // set front ID to Unknown's ID
+              setFrontName(alterNames[0]) // set front name to Unknown's name
+            } else {
+              console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED UNKNOWN`) // Change this to match whoever should be front
+            }
+          }
         })
       } catch (error) {
         console.error(error)
@@ -65,7 +83,6 @@ const App = () => {
   );
   useEffect(() => {
     if (response?.type === 'success') {
-      console.log('IN APP SIGNIN USEEFFECT, RESPONSE TYPE == SUCCESS')
       const { id_token } = response.params;
       
       const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
@@ -83,15 +100,17 @@ const App = () => {
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
-      <Context.Provider value={{
-        userUID: loggedIn,
-        db: db
+      <Context.Provider value={{ // set global state
+        user: loggedIn,
+        db: db,
+        frontName: frontName,
+        frontID: frontID,
       }}>
         <View style={styles.header}>
           {/* Header displays only if account is initialized */}
           { accountInit && <Header /> }
         </View>
-        <View style={styles.main}>
+        <View style={styles.mainContent}>
           {/* ROUTING HAPPENS HERE */}
           {/* If your account has not finished initializing display the logIn component */}
           { !accountInit && <LogIn
@@ -99,8 +118,8 @@ const App = () => {
                               request={request} 
                               promptAsync={promptAsync} 
                               initializeAccount={initializeAccount} />}
-          {/* If your account has finished initializing display the page stored in 'page' */}
-          { (accountInit && (page == "chat")) && <Chat initChatRoom="main" />}
+          {/* If your account has finished initializing display the Main component */}
+          { accountInit && <Main nav={nav} />}
         </View>
       </Context.Provider>
     </SafeAreaView>
@@ -110,7 +129,7 @@ const App = () => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: 'grey',
+    backgroundColor: 'grey', // TESTING BG COLOR
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
@@ -118,12 +137,16 @@ const styles = StyleSheet.create({
   header: {
     height: 75,
     width: "100%",
-    backgroundColor: "dodgerblue",
+    backgroundColor: "dodgerblue", // TESTING BG COLOR
   },
-  main: {
+  mainContent: {
     flexGrow: 1,
     width: "100%",
-    backgroundColor: "tomato",
+    flexDirection: "row",
+    // height: "100%",
+    backgroundColor: "tomato", // TESTING BG COLOR
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
 

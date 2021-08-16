@@ -20,7 +20,7 @@ const styles = StyleSheet.create({
   GoogleLogInButton: {
     height: 25,
     width: 100,
-    backgroundColor: "teal"
+    backgroundColor: "teal" // TESTING BG COLOR
   }
 })
 

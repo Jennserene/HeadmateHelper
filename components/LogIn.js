@@ -1,14 +1,17 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native'
 import Authenticate from './LogIn/Authenticate'
 import CreateSystem from './LogIn/CreateSystem'
+import Context from '../Context'
 
 const LogIn = (props) => {
 
+  const context = useContext(Context)
+
   return (
     <View style={styles.logInView}>
-      { !props.loggedIn && <Authenticate request={props.request} promptAsync={props.promptAsync} /> }
-      { (props.loggedIn && !props.accountInit) && <CreateSystem initializeAccount={props.initializeAccount} /> }
+      { !context.user && <Authenticate request={props.request} promptAsync={props.promptAsync} /> }
+      { context.user && <CreateSystem initializeAccount={props.initializeAccount} /> }
     </View>
   );
 }
