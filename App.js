@@ -33,7 +33,7 @@ const App = () => {
     const checkIfLoggedIn = () => {
       try {
         firebase.auth().onAuthStateChanged( async (user) => {
-          user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user uid
+          user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user
           const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
