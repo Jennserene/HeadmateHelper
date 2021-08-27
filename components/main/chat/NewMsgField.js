@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { View, Text, Pressable, TextInput, StyleSheet } from 'react-native';
 import Context from '../../../Context'
+import * as firebase from 'firebase'
 
 const NewMsgField = (props) => {
 
@@ -19,13 +20,14 @@ const NewMsgField = (props) => {
         avatar: null,
         author: context.frontName,
         text: msgText,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
 
     } catch (err) {
       console.error(err)
     }
     
-
+    // Reset input field
     setMsgText('')
   }
 
@@ -50,7 +52,7 @@ const styles = StyleSheet.create({
 
   },
   inputField: {
-    flexGrow: 1
+    width: '90%'
   },
   submitButton: {
     padding: 10,

@@ -36,7 +36,7 @@ const Chat = (props) => {
     <View style={styles.chatView}>
       <Text>{chatRoom}</Text>
       <View style={styles.displayMsgs}>
-        <ChatHistory roomID={roomID} />
+        { roomID && <ChatHistory roomID={roomID} /> }
       </View>
       <View style={styles.msgFieldView}>
         <NewMsgField roomID={roomID} />

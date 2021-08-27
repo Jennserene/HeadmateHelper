@@ -4,7 +4,7 @@ import Menu from './header/Menu'
 import Switch from './header/Switch'
 import Context from '../Context'
 
-const Header = () => {
+const Header = (props) => {
 
   const context = useContext(Context)
 
@@ -20,7 +20,7 @@ const Header = () => {
       </View>
       {/* SWITCH BUTTON */}
       <View style={styles.switchArea}>
-        <Switch />
+        <Switch toggleSwitchMenu={props.toggleSwitchMenu} />
       </View>
     </View>
   );

@@ -1,11 +1,19 @@
-import React from 'react'
-import { Text, StyleSheet, Pressable } from 'react-native'
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Pressable } from 'react-native'
 
 const Switch = (props) => {
+
+  const SwitchToggle = () => {
+    props.toggleSwitchMenu()
+  }
+
   return (
-    <Pressable style={styles.switchButton} onPress={() => console.log('Switch button pressed')}>
-      <Text style={styles.switchButtonText}>Switch</Text>
-    </Pressable>
+    <View>
+      <Pressable style={styles.switchButton} onPress={() => SwitchToggle()}>
+        <Text style={styles.switchButtonText}>Switch</Text>
+      </Pressable>
+    </View>
+
   );
 }
 

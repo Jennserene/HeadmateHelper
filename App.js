@@ -1,5 +1,6 @@
 import ApiKeys from './constants/ApiKeys'
 import * as firebase from 'firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
 import * as WebBrowser from 'expo-web-browser';
 import { ResponseType } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
@@ -27,8 +28,10 @@ const App = () => {
   const [nav, setNav] = useState("chat")
   const [frontName, setFrontName] = useState('Unknown')
   const [frontID, setFrontID] = useState(null)
+  const [switchMenuOpen, setSwitchMenuOpen] = useState(false)
+  const [allAlters, setAllAlters] = useState(null)
 
-  // Check if user account is logged in
+  // Check if user account is logged in and set up state
   useEffect( () => {
     const checkIfLoggedIn = () => {
       try {
@@ -37,19 +40,19 @@ const App = () => {
           const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
-              return documentSnapshot.data().accountInit // if exists return value for accountInit
+              return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
             } else {
               return false
             }
           })
-          if (init) {
-            setAccountInit(init) // If user account initialized, setAccountInit to true, otherwise set to false
+          if (init === 'true') { // Set front to Unknown
+            setAccountInit(true) // If user account initialized, setAccountInit to true, otherwise set to false
             const querySnapshot = await dbUser.collection('alters').where('name', '==', 'Unknown').get() // Get query of alters named Unknown
-            const alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
-            const alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
+            let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
+            let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
             querySnapshot.forEach((doc) => {
-              alterIDs.push(doc.id) // add ids of alters named Unknown to array
-              alterNames.push(doc.get('name')) // add names of alters named Unknown to array
+              alterIDs.push(doc.id) // add ids of alters named Unknown to array alterIDs
+              alterNames.push(doc.get('name')) // add names of alters named Unknown to array alterNames
             })
             if (alterIDs.length == 1) {
               setFrontID(alterIDs[0]) // set front ID to Unknown's ID
@@ -58,6 +61,13 @@ const App = () => {
               console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED UNKNOWN`) // Change this to match whoever should be front
             }
           }
+          // Get list of all alters
+          const querySnapshot2 = await dbUser.collection('alters').get() // Get query of all alters
+          let alterNames2 = [] // Holder of names, contains many
+          querySnapshot2.forEach((doc) => {
+            alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
+          })
+          setAllAlters(alterNames2)
         })
       } catch (error) {
         console.error(error)
@@ -97,6 +107,19 @@ const App = () => {
     setAccountInit(true)
   }
 
+  // Toggle whether the switch menu is open or not
+  const toggleSwitchMenu = () => {
+    setSwitchMenuOpen(!switchMenuOpen)
+  }
+
+  // Add alter to allAlters
+  const addAlter = (alterName) => {
+    let names = allAlters
+    names.push(alterName)
+    setAllAlters(names)
+    console.log(names)
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
@@ -108,7 +131,8 @@ const App = () => {
       }}>
         <View style={styles.header}>
           {/* Header displays only if account is initialized */}
-          { accountInit && <Header /> }
+          { accountInit && <Header 
+                              toggleSwitchMenu={toggleSwitchMenu} /> }
         </View>
         <View style={styles.mainContent}>
           {/* ROUTING HAPPENS HERE */}
@@ -119,7 +143,11 @@ const App = () => {
                               promptAsync={promptAsync} 
                               initializeAccount={initializeAccount} />}
           {/* If your account has finished initializing display the Main component */}
-          { accountInit && <Main nav={nav} />}
+          { accountInit && <Main 
+                              nav={nav} 
+                              switchMenuOpen={switchMenuOpen} 
+                              toggleSwitchMenu={toggleSwitchMenu} 
+                              addAlter={addAlter}/> }
         </View>
       </Context.Provider>
     </SafeAreaView>
