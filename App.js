@@ -25,19 +25,29 @@ const App = () => {
   // Set State
   const [loggedIn, setLoggedIn] = useState(null)
   const [accountInit, setAccountInit] = useState(false)
-  const [nav, setNav] = useState("chat")
   const [frontName, setFrontName] = useState('Unknown')
   const [frontID, setFrontID] = useState(null)
   const [switchMenuOpen, setSwitchMenuOpen] = useState(false)
+  const [mainMenuOpen, setMainMenuOpen] = useState(false)
   const [allAlters, setAllAlters] = useState(null)
+
+  // Check if user is already logged in and then set them to loggedIn.
+  useEffect( () => {
+    try {
+      firebase.auth().onAuthStateChanged( async (user) => {
+        user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user
+      })
+    } catch (error) {
+      console.error(error)
+    }
+  }, [])
 
   // Check if user account is logged in and set up state
   useEffect( () => {
-    const checkIfLoggedIn = () => {
-      try {
-        firebase.auth().onAuthStateChanged( async (user) => {
-          user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user
-          const dbUser = await db.collection("users").doc(user.uid)
+    const checkIfLoggedIn = async () => {
+      if (loggedIn) {
+        try {
+          const dbUser = await db.collection("users").doc(loggedIn.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
@@ -68,14 +78,17 @@ const App = () => {
             alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
           })
           setAllAlters(alterNames2)
-        })
-      } catch (error) {
-        console.error(error)
+          // Bring up switch menu right away
+          setMainMenuOpen(false)
+          setSwitchMenuOpen(true)
+        } catch (error) {
+          console.error(error)
+        }
       }
       
     }
     checkIfLoggedIn()
-  }, []) // update on mount
+  }, [loggedIn]) // update on loggedIn being changed
 
   // if you are not logged in, your account can't be initialized
   useEffect( () => {
@@ -91,15 +104,18 @@ const App = () => {
       clientId: '967966221796-n6j2t7vutdgglv42lhmnguau9qrp9f8f.apps.googleusercontent.com',
       },
   );
-  useEffect(() => {
-    if (response?.type === 'success') {
-      const { id_token } = response.params;
-      
-      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-      firebase.auth().signInWithCredential(credential);
-      const user = firebase.auth().currentUser
-      setLoggedIn(user.uid)
+  useEffect( () => {
+    const logInUsingGoogle = async () => {
+      if (response?.type === 'success') {
+        const { id_token } = response.params;
+        
+        const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+        firebase.auth().signInWithCredential(credential);
+        const user = await firebase.auth().currentUser
+        setLoggedIn(user)
+      }
     }
+    logInUsingGoogle()
   }, [response]);
 
   // Initialize the account
@@ -107,9 +123,23 @@ const App = () => {
     setAccountInit(true)
   }
 
+  // Log out of the account
+  const logOut = () => {
+    firebase.auth().signOut()
+    setAccountInit(false)
+    setLoggedIn(null)
+  }
+
   // Toggle whether the switch menu is open or not
   const toggleSwitchMenu = () => {
     setSwitchMenuOpen(!switchMenuOpen)
+    setMainMenuOpen(false)
+  }
+
+  // Toggle whether the main menu is open or not
+  const toggleMainMenu = () => {
+    setMainMenuOpen(!mainMenuOpen)
+    setSwitchMenuOpen(false)
   }
 
   // Add alter to allAlters
@@ -117,7 +147,24 @@ const App = () => {
     let names = allAlters
     names.push(alterName)
     setAllAlters(names)
-    console.log(names)
+  }
+
+  // Set alter as front
+  const makeAlterFront = async (alterName) => {
+    const dbUser = await db.collection("users").doc(loggedIn.uid)
+    const querySnapshot = await dbUser.collection('alters').where('name', '==', alterName).get() // Get query of alters named alterName
+    let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
+    let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
+    querySnapshot.forEach((doc) => {
+      alterIDs.push(doc.id) // add ids of alters named alterName to array alterIDs
+      alterNames.push(doc.get('name')) // add names of alters named alterName to array alterNames
+    })
+    if (alterIDs.length == 1) {
+      setFrontID(alterIDs[0]) // set front ID to alterName's ID
+      setFrontName(alterNames[0]) // set front name to alterName's name
+    } else {
+      console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED ${alterName}`)
+    }
   }
 
   return (
@@ -128,11 +175,13 @@ const App = () => {
         db: db,
         frontName: frontName,
         frontID: frontID,
+        allAlters: allAlters,
       }}>
         <View style={styles.header}>
           {/* Header displays only if account is initialized */}
           { accountInit && <Header 
-                              toggleSwitchMenu={toggleSwitchMenu} /> }
+                              toggleSwitchMenu={toggleSwitchMenu} 
+                              toggleMainMenu={toggleMainMenu} /> }
         </View>
         <View style={styles.mainContent}>
           {/* ROUTING HAPPENS HERE */}
@@ -141,13 +190,16 @@ const App = () => {
                               accountInit={accountInit} 
                               request={request} 
                               promptAsync={promptAsync} 
-                              initializeAccount={initializeAccount} />}
+                              initializeAccount={initializeAccount} /> }
           {/* If your account has finished initializing display the Main component */}
           { accountInit && <Main 
-                              nav={nav} 
                               switchMenuOpen={switchMenuOpen} 
+                              mainMenuOpen={mainMenuOpen} 
                               toggleSwitchMenu={toggleSwitchMenu} 
-                              addAlter={addAlter}/> }
+                              toggleMainMenu={toggleMainMenu} 
+                              addAlter={addAlter} 
+                              makeAlterFront={makeAlterFront}
+                              logOut={logOut} /> }
         </View>
       </Context.Provider>
     </SafeAreaView>
@@ -157,7 +209,7 @@ const App = () => {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: 'grey', // TESTING BG COLOR
+    backgroundColor: '#7252CA',
     alignItems: 'center',
     justifyContent: 'center',
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
@@ -165,14 +217,14 @@ const styles = StyleSheet.create({
   header: {
     height: 75,
     width: "100%",
-    backgroundColor: "dodgerblue", // TESTING BG COLOR
+    backgroundColor: '#50359A',
   },
   mainContent: {
     flexGrow: 1,
     width: "100%",
     flexDirection: "row",
     // height: "100%",
-    backgroundColor: "tomato", // TESTING BG COLOR
+    backgroundColor: '#7252CA',
     alignItems: "center",
     justifyContent: "center",
   },

@@ -2,8 +2,15 @@ import React from 'react'
 import { Image, Pressable, StyleSheet } from 'react-native'
 
 const Menu = (props) => {
+
+  const { toggleMainMenu } = props
+
+  const MainToggle = () => {
+    toggleMainMenu()
+  }
+
   return (
-    <Pressable style={styles.menuButton} onPress={() => console.log('Menu button pressed')}>
+    <Pressable style={styles.menuButton} onPress={() => MainToggle()}>
       <Image style={styles.menuImage} source={require("../../assets/logo.png")} />
     </Pressable>
   );

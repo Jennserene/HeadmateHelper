@@ -7,9 +7,11 @@ const SwitchMenu = (props) => {
 
   const [menuState, setMenuState] = useState('choose')
 
+  const { toggleSwitchMenu, makeAlterFront, addAlter } = props
+
   // Close the switch menu
   const SwitchToggle = () => {
-    props.toggleSwitchMenu()
+    toggleSwitchMenu()
   }
 
   // Toggle between the Switch menu and the New Alter menu
@@ -26,11 +28,13 @@ const SwitchMenu = (props) => {
       <View style={styles.MenuView}>
         { menuState == 'choose' && <SwitchMenuContents 
                                       menuStateToggle={menuStateToggle} 
-                                      toggleSwitchMenu={props.toggleSwitchMenu} /> }
+                                      toggleSwitchMenu={toggleSwitchMenu}
+                                      makeAlterFront={makeAlterFront} /> }
         { menuState == 'new' && <SwitchMenuNewAlter 
                                   menuStateToggle={menuStateToggle} 
-                                  toggleSwitchMenu={props.toggleSwitchMenu}
-                                  addAlter={props.addAlter} /> }
+                                  toggleSwitchMenu={toggleSwitchMenu}
+                                  addAlter={addAlter}
+                                  makeAlterFront={makeAlterFront} /> }
       </View>
       <Pressable style={styles.ClickOutPressable} onPress={ () => SwitchToggle()}>
         <View style={styles.ClickOutView} />

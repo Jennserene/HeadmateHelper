@@ -8,11 +8,13 @@ const Header = (props) => {
 
   const context = useContext(Context)
 
+  const { toggleSwitchMenu, toggleMainMenu } = props
+
   return (
     <View style={styles.header}>
       {/* MENU BUTTON */}
       <View style={styles.menuArea}>
-        <Menu />
+        <Menu toggleMainMenu={toggleMainMenu} />
       </View>
       {/* TITLE AREA - SHOWS WHO IS FRONT */}
       <View style={styles.titleArea}>
@@ -20,7 +22,7 @@ const Header = (props) => {
       </View>
       {/* SWITCH BUTTON */}
       <View style={styles.switchArea}>
-        <Switch toggleSwitchMenu={props.toggleSwitchMenu} />
+        <Switch toggleSwitchMenu={toggleSwitchMenu} />
       </View>
     </View>
   );
@@ -37,7 +39,7 @@ const styles = StyleSheet.create({
   menuArea: {
     height: 75,
     width: 75,
-    backgroundColor: "purple", // TESTING BG COLOR
+    backgroundColor: '#50359A',
   },
   switchArea: {
     height: "100%",
@@ -48,7 +50,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "flex-start",
     justifyContent: "center",
-    backgroundColor: "gray", // TESTING BG COLOR
+    backgroundColor: '#50359A',
     flexShrink: 1,
     paddingLeft: 5,
   },

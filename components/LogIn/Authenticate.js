@@ -19,7 +19,8 @@ const Authenticate = (props) => {
 const styles = StyleSheet.create({
   GoogleLogInButton: {
     height: 25,
-    width: 100,
+    width: 150,
+    alignItems: 'center',
     backgroundColor: "teal" // TESTING BG COLOR
   }
 })

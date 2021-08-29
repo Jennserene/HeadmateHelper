@@ -9,13 +9,15 @@ const NewMsgField = (props) => {
 
   const [msgText, setMsgText] = useState('')
 
+  const { roomID } = props
+
   const HandleMsgText = (text) => {
     setMsgText(text)
   }
 
   const SubmitMsg = async () => {
     try {
-      const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(props.roomID).collection('chats')
+      const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
       const dbNewChat = dbRoomChats.add({
         avatar: null,
         author: context.frontName,

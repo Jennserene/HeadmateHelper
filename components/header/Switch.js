@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 
 const Switch = (props) => {
 
+  const { toggleSwitchMenu } = props
+
   const SwitchToggle = () => {
-    props.toggleSwitchMenu()
+    toggleSwitchMenu()
   }
 
   return (

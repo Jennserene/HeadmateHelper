@@ -1,35 +1,71 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Switch } from 'react-native'
+import SwitchMenuPicker from './SwitchMenuPicker'
 
 const SwitchMenuContents = (props) => {
 
+  const { menuStateToggle, toggleSwitchMenu, makeAlterFront } = props
+
+  const [pickerSelection, setPickerSelection] = useState(null)
+  const [nameErrorExists, setNameErrorExists] = useState(false)
+  const [nameError, setNameError] = useState('')
+
   // Switch to New Alter menu
   const ToggleMenuState = () => {
-    props.menuStateToggle()
+    menuStateToggle()
   }
 
   // Close the menu
   const SwitchToggle = () => {
-    props.toggleSwitchMenu()
+    toggleSwitchMenu()
+  }
+
+  // Make Unknown Front
+  const MakeUnknownFront = () => {
+    makeAlterFront('Unknown')
+    SwitchToggle()
+  }
+
+  // Change picker selection
+  const handlePicker = (alter) => {
+    setPickerSelection(alter)
+  }
+
+  // Make selected alter front
+  const MakeAlterFront = () => {
+    if (!pickerSelection || pickerSelection == 'default') {
+      setNameErrorExists(true)
+      setNameError('You must select an alter!')
+      return
+    }
+    makeAlterFront(pickerSelection)
+    setNameErrorExists(false)
+    setNameError('')
+    SwitchToggle()
   }
 
   return (
     <View>
       <Text style={styles.HeaderText}>Who is Front?</Text>
       <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchButtons}>
+        <Pressable style={styles.SwitchButtons} onPress={ () => {MakeAlterFront()}}>
           <Text>Switch</Text></Pressable>
-        <Text style={styles.SelectionText}>Alter Picker</Text>
+        <SwitchMenuPicker handlePicker={handlePicker} />
+      </View>
+      { nameErrorExists && <Text style={styles.NameErrorText}>{nameError}</Text> }
+      <View style={styles.SelectionView}>
+        <Pressable style={styles.SwitchPressable} onPress={ () => {ToggleMenuState()}}>
+          <View style={styles.SwitchButtons}>
+            <Text>Switch</Text>
+          </View>
+        <Text style={styles.SelectionText}>New Alter</Text></Pressable>
       </View>
       <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchButtons} onPress={ () => {ToggleMenuState()}}>
-          <Text>Switch</Text></Pressable>
-        <Text style={styles.SelectionText}>New Alter</Text>
-      </View>
-      <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchButtons}>
-          <Text>Switch</Text></Pressable>
-        <Text style={styles.SelectionText}>Blurry/Unknown</Text>
+        <Pressable style={styles.SwitchPressable} onPress={ () => {MakeUnknownFront()}}>
+          <View style={styles.SwitchButtons}>
+            <Text>Switch</Text>
+          </View>
+        <Text style={styles.SelectionText}>Blurry/Unknown</Text></Pressable>
       </View>
     </View>
   );
@@ -47,7 +83,9 @@ const styles = StyleSheet.create({
     paddingLeft: 50,
     paddingTop: 10,
     paddingBottom: 10,
-    flexDirection: 'row'
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start'
   },
   SelectionText: {
     fontSize: 20,
@@ -59,6 +97,13 @@ const styles = StyleSheet.create({
     width: 50,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  SwitchPressable: {
+    flexDirection: 'row',
+  },
+  NameErrorText: {
+    color: 'red',
+    paddingLeft: 50,
   },
 })
 

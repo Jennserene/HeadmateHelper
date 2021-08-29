@@ -12,27 +12,35 @@ const SwitchMenuNewAlter = (props) => {
   const [nameError, setNameError] = useState('')
   const [proxy, setProxy] = useState('')
 
+  const { menuStateToggle, toggleSwitchMenu, addAlter, makeAlterFront } = props
+
   // Switch to Switch menu
   const ToggleMenuState = () => {
-    props.menuStateToggle()
+    menuStateToggle()
   }
 
   const HandleName = (text) => {
     setName(text)
   }
 
-  const HandleProxy = (text) => {console.log('NEW ALTER: ', dbNewAlter)
+  const HandleProxy = (text) => {
+    setProxy(text)
   }
 
   // Close the menu
   const SwitchToggle = () => {
-    props.toggleSwitchMenu()
+    toggleSwitchMenu()
   }
 
   const SubmitAlter = async () => {
     if (!name) { // If the name field is empty
       setNameErrorExists(true)
       setNameError('A name is required!')
+      return
+    }
+    if (context.allAlters.includes(name)) { // If there is already an alter by that name
+      setNameErrorExists(true)
+      setNameError('There is already an alter by that name!')
       return
     }
     let dbNewAlter = null
@@ -53,9 +61,11 @@ const SwitchMenuNewAlter = (props) => {
 
     } catch (err) {
       console.error(err)
+      return
     }
     
-    props.addAlter(name)
+    addAlter(name)
+    makeAlterFront(name)
 
     // Reset input field
     setName('')

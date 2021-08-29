@@ -13,7 +13,7 @@ const ChatMsg = (props) => {
       </View>
       <View style={styles.TextView}>
         <View style={styles.HeaderView}>
-          <Text>{author}</Text>
+          <Text style={styles.HeaderText}>{author}</Text>
         </View>
         <View style={styles.MsgView}>
           <Text>{text}</Text>
@@ -37,17 +37,19 @@ const styles = StyleSheet.create({
   TextView: {
     flex: 1,
     flexDirection: 'column',
-    backgroundColor: 'green',
   },
   HeaderView: {
     flexShrink: 1,
     flexDirection: 'row',
-    backgroundColor: 'red',
+    paddingLeft: 10,
+  },
+  HeaderText: {
+    fontWeight: 'bold'
   },
   MsgView: {
     flexShrink: 1,
     flexDirection: 'column',
-    backgroundColor: 'yellow',
+    paddingLeft: 15,
   }
 })
 
