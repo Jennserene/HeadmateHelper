@@ -167,6 +167,19 @@ const App = () => {
     }
   }
 
+  // Rename an alter
+  const renameAlter = (newName) => {
+    if (newName !== frontName) {
+      for (let i = 0; i < allAlters.length; i++ ) {
+        if (allAlters[i] == frontName) {
+          allAlters[i] = newName
+          setFrontName(newName)
+          return
+        }
+      }
+    }
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
@@ -199,7 +212,8 @@ const App = () => {
                               toggleMainMenu={toggleMainMenu} 
                               addAlter={addAlter} 
                               makeAlterFront={makeAlterFront}
-                              logOut={logOut} /> }
+                              logOut={logOut} 
+                              renameAlter={renameAlter} /> }
         </View>
       </Context.Provider>
     </SafeAreaView>

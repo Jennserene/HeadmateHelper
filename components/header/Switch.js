@@ -11,7 +11,13 @@ const Switch = (props) => {
 
   return (
     <View>
-      <Pressable style={styles.switchButton} onPress={() => SwitchToggle()}>
+      <Pressable 
+          style={styles.switchButton} 
+          onPress={() => SwitchToggle()} 
+          accessible={true} 
+          accessibilityLabel="Switch"
+          accessibilityHint="Opens up the Switch menu"
+          accessibilityRole='button'>
         <Text style={styles.switchButtonText}>Switch</Text>
       </Pressable>
     </View>

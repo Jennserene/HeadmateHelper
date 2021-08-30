@@ -19,7 +19,14 @@ const Main = (props) => {
   const [allRooms, setAllRooms] = useState(null)
   const [currentRoom, setCurrentRoom] = useState('Main')
 
-  const { switchMenuOpen, toggleSwitchMenu, addAlter, makeAlterFront, toggleMainMenu, mainMenuOpen, logOut } = props
+  const { switchMenuOpen, 
+          toggleSwitchMenu, 
+          addAlter, 
+          makeAlterFront, 
+          toggleMainMenu, 
+          mainMenuOpen, 
+          logOut, 
+          renameAlter } = props
 
   // set state on mount
   useEffect( () => {
@@ -56,7 +63,7 @@ const Main = (props) => {
     <View style={styles.MainView}>
       <View style={styles.ContentView}>
         { nav == 'chat' && <Chat currentRoom={currentRoom} /> }
-        { nav == 'system' && <System /> }
+        { nav == 'system' && <System renameAlter={renameAlter}/> }
         { nav == 'reminders' && <Reminders /> }
         { nav == 'diary' && <Diary /> }
         { nav == 'settings' && <Settings /> }

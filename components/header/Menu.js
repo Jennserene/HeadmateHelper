@@ -10,7 +10,13 @@ const Menu = (props) => {
   }
 
   return (
-    <Pressable style={styles.menuButton} onPress={() => MainToggle()}>
+    <Pressable 
+        style={styles.menuButton} 
+        onPress={() => MainToggle()}
+        accessible={true} 
+        accessibilityLabel="Main Menu"
+        accessibilityHint="Opens up the Main menu"
+        accessibilityRole='button'>
       <Image style={styles.menuImage} source={require("../../assets/logo.png")} />
     </Pressable>
   );
