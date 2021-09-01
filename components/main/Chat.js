@@ -12,6 +12,7 @@ const Chat = (props) => {
 
   // const [chatRoom, setChatRoom] = useState(currentRoom) // Is this necessary? Can I use props.currentRoom instead?
   const [roomID, setRoomID] = useState(null)
+  const [newMsg, setNewMsg] = useState(null)
 
   useEffect(() => {
     const getRoomID = async () => {
@@ -34,14 +35,18 @@ const Chat = (props) => {
     getRoomID()
   }, [currentRoom])
 
+  const updateNewMsg = (msg) => {
+    setNewMsg(msg)
+  }
+
   return (
     <View style={styles.chatView}>
       <Text>{currentRoom}</Text>
       <View style={styles.displayMsgs}>
-        { roomID && <ChatHistory roomID={roomID} /> }
+        { roomID && <ChatHistory roomID={roomID} newMsg={newMsg} /> }
       </View>
       <View style={styles.msgFieldView}>
-        <NewMsgField roomID={roomID} />
+        <NewMsgField roomID={roomID} updateNewMsg={updateNewMsg} />
       </View>
     </View>
   );

@@ -9,7 +9,7 @@ const NewMsgField = (props) => {
 
   const [msgText, setMsgText] = useState('')
 
-  const { roomID } = props
+  const { roomID, updateNewMsg } = props
 
   const HandleMsgText = (text) => {
     setMsgText(text)
@@ -17,13 +17,16 @@ const NewMsgField = (props) => {
 
   const SubmitMsg = async () => {
     try {
-      const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
-      const dbNewChat = dbRoomChats.add({
+      const timeDate = await firebase.firestore.FieldValue.serverTimestamp()
+      const newMsg = {
         avatar: null,
         author: context.frontName,
         text: msgText,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
+        createdAt: timeDate
+      }
+      const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
+      const dbNewChat = await dbRoomChats.add(newMsg)
+      updateNewMsg(dbNewChat.id)
 
     } catch (err) {
       console.error(err)
@@ -31,6 +34,8 @@ const NewMsgField = (props) => {
     
     // Reset input field
     setMsgText('')
+    
+    // updateNewMsg(newMsg)
   }
 
   return (

@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexDirection: 'column',
     paddingLeft: 15,
-  }
+  },
 })
 
 

@@ -10,13 +10,17 @@ const MainMenuRight = (props) => {
   }
 
   const printAllRooms = () => {
-    return allRooms.map( (room) => {
-      return <View key={room} style={styles.LinkView}>
-      <Pressable onPress={ () => {changeRoom({room})}}>
-        <Text style={styles.LinkText}>{room}</Text>
-      </Pressable>
-    </View>
-    })
+    if (allRooms) {
+      return allRooms.map( (room) => {
+        return <View key={room} style={styles.LinkView}>
+        <Pressable onPress={ () => {changeRoom({room})}}>
+          <Text style={styles.LinkText}>{room}</Text>
+        </Pressable>
+      </View>
+      })
+    } else {
+      return <Text>Loading...</Text>
+    }
   }
 
   return (

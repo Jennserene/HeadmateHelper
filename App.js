@@ -10,6 +10,7 @@ import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
 import Header from './components/Header'
 import LogIn from './components/LogIn'
 import Main from './components/Main'
+import LoadingScreen from './components/LoadingScreen'
 import Context from './Context'
 
 // Initialize Firebase
@@ -30,6 +31,7 @@ const App = () => {
   const [switchMenuOpen, setSwitchMenuOpen] = useState(false)
   const [mainMenuOpen, setMainMenuOpen] = useState(false)
   const [allAlters, setAllAlters] = useState(null)
+  const [loading, setLoading] = useState(false)
 
   // Check if user is already logged in and then set them to loggedIn.
   useEffect( () => {
@@ -46,12 +48,14 @@ const App = () => {
   useEffect( () => {
     const checkIfLoggedIn = async () => {
       if (loggedIn) {
+        setLoading(true)
         try {
           const dbUser = await db.collection("users").doc(loggedIn.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
             } else {
+              setLoading(false)
               return false
             }
           })
@@ -70,19 +74,21 @@ const App = () => {
             } else {
               console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED UNKNOWN`) // Change this to match whoever should be front
             }
+            // Get list of all alters
+            const querySnapshot2 = await dbUser.collection('alters').get() // Get query of all alters
+            let alterNames2 = [] // Holder of names, contains many
+            querySnapshot2.forEach((doc) => {
+              alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
+            })
+            setAllAlters(alterNames2)
+            // Bring up switch menu right away
+            setMainMenuOpen(false)
+            setSwitchMenuOpen(true)
+            setLoading(false)
           }
-          // Get list of all alters
-          const querySnapshot2 = await dbUser.collection('alters').get() // Get query of all alters
-          let alterNames2 = [] // Holder of names, contains many
-          querySnapshot2.forEach((doc) => {
-            alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
-          })
-          setAllAlters(alterNames2)
-          // Bring up switch menu right away
-          setMainMenuOpen(false)
-          setSwitchMenuOpen(true)
         } catch (error) {
           console.error(error)
+          setLoading(false)
         }
       }
       
@@ -121,11 +127,14 @@ const App = () => {
   // Initialize the account
   const initializeAccount = () => {
     setAccountInit(true)
+    setMainMenuOpen(false)
+    setSwitchMenuOpen(true)
   }
 
   // Log out of the account
   const logOut = () => {
     firebase.auth().signOut()
+    setMainMenuOpen(false)
     setAccountInit(false)
     setLoggedIn(null)
   }
@@ -183,39 +192,42 @@ const App = () => {
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
-      <Context.Provider value={{ // set global state
-        user: loggedIn,
-        db: db,
-        frontName: frontName,
-        frontID: frontID,
-        allAlters: allAlters,
-      }}>
-        <View style={styles.header}>
-          {/* Header displays only if account is initialized */}
-          { accountInit && <Header 
-                              toggleSwitchMenu={toggleSwitchMenu} 
-                              toggleMainMenu={toggleMainMenu} /> }
-        </View>
-        <View style={styles.mainContent}>
-          {/* ROUTING HAPPENS HERE */}
-          {/* If your account has not finished initializing display the logIn component */}
-          { !accountInit && <LogIn
-                              accountInit={accountInit} 
-                              request={request} 
-                              promptAsync={promptAsync} 
-                              initializeAccount={initializeAccount} /> }
-          {/* If your account has finished initializing display the Main component */}
-          { accountInit && <Main 
-                              switchMenuOpen={switchMenuOpen} 
-                              mainMenuOpen={mainMenuOpen} 
-                              toggleSwitchMenu={toggleSwitchMenu} 
-                              toggleMainMenu={toggleMainMenu} 
-                              addAlter={addAlter} 
-                              makeAlterFront={makeAlterFront}
-                              logOut={logOut} 
-                              renameAlter={renameAlter} /> }
-        </View>
-      </Context.Provider>
+      { loading ? // if app is loading, display loading screen.
+        <LoadingScreen /> :
+        <Context.Provider value={{ // set global state
+          user: loggedIn,
+          db: db,
+          frontName: frontName,
+          frontID: frontID,
+          allAlters: allAlters,
+        }}>
+          <View style={styles.header}>
+            {/* Header displays only if account is initialized */}
+            { accountInit && <Header 
+                                toggleSwitchMenu={toggleSwitchMenu} 
+                                toggleMainMenu={toggleMainMenu} /> }
+          </View>
+          <View style={styles.mainContent}>
+            {/* ROUTING HAPPENS HERE */}
+            {/* If your account has not finished initializing display the logIn component */}
+            { !accountInit && <LogIn
+                                accountInit={accountInit} 
+                                request={request} 
+                                promptAsync={promptAsync} 
+                                initializeAccount={initializeAccount} /> }
+            {/* If your account has finished initializing display the Main component */}
+            { accountInit && <Main 
+                                switchMenuOpen={switchMenuOpen} 
+                                mainMenuOpen={mainMenuOpen} 
+                                toggleSwitchMenu={toggleSwitchMenu} 
+                                toggleMainMenu={toggleMainMenu} 
+                                addAlter={addAlter} 
+                                makeAlterFront={makeAlterFront}
+                                logOut={logOut} 
+                                renameAlter={renameAlter} /> }
+          </View>
+        </Context.Provider>
+      }
     </SafeAreaView>
   );
 }
