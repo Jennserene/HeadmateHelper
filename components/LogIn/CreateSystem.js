@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import Context from '../../Context'
+import * as firebase from 'firebase'
 
 const CreateSystem = (props) => {
 
@@ -13,6 +14,10 @@ const CreateSystem = (props) => {
   }
 
   const SubmitSystem = async () => {
+    if (systemName == '') {
+      // TODO: add an error message here
+      return
+    }
     try {
       context.db.collection('users').doc(context.user.uid).set({ // Create doc with user's UID with two fields in it
         systemName: systemName,
@@ -23,7 +28,8 @@ const CreateSystem = (props) => {
         name: 'Unknown'
       })
       const room = await dbUser.collection('rooms').add({ // create 'rooms' collection inside user doc
-        roomName: 'Main'
+        roomName: 'Main',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
       props.initializeAccount() // set accountInit to true
     } catch (error) {
@@ -44,7 +50,13 @@ const CreateSystem = (props) => {
           style={styles.InputField}
           placeholder="System Name"
           onChangeText={name => HandleSystemState(name)}/>
-        <Pressable style={styles.SubmitButton} onPress={() => SubmitSystem()}>
+        <Pressable 
+            style={styles.SubmitButton} 
+            onPress={() => SubmitSystem()}
+            accessible={true} 
+            accessibilityLabel="Initialize your System"
+            accessibilityHint="Creates your system. Make sure you have typed in a system name."
+            accessibilityRole='button'>
           <Text>Submit</Text>
         </Pressable>
       </View>

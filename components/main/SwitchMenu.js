@@ -36,7 +36,13 @@ const SwitchMenu = (props) => {
                                   addAlter={addAlter}
                                   makeAlterFront={makeAlterFront} /> }
       </View>
-      <Pressable style={styles.ClickOutPressable} onPress={ () => SwitchToggle()}>
+      <Pressable 
+          style={styles.ClickOutPressable} 
+          onPress={ () => SwitchToggle()}
+          accessible={true} 
+          accessibilityLabel="Exit switch menu"
+          accessibilityHint="Tap here to exit the switch menu."
+          accessibilityRole="button">
         <View style={styles.ClickOutView} />
       </Pressable>
     </View>

@@ -12,32 +12,57 @@ const MainMenuLeft = (props) => {
   return (
     <View style={styles.Container}>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleNav('system')}}>
+        <Pressable 
+            onPress={ () => {handleNav('system')}}
+            accessible={true} 
+            accessibilityLabel="View System Profile"
+            accessibilityRole="button">
           <Text style={styles.LinkText}>System Profile</Text>
         </Pressable>
       </View>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleNav('reminders')}}>
+        <Pressable 
+            onPress={ () => {handleNav('reminders')}}
+            accessible={true} 
+            accessibilityLabel="View Reminders"
+            accessibilityRole="button">
           <Text style={styles.LinkText}>Reminders</Text>
         </Pressable>
       </View>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleNav('diary')}}>
+        <Pressable 
+            onPress={ () => {handleNav('diary')}}
+            accessible={true} 
+            accessibilityLabel="View Diary"
+            accessibilityRole="button">
           <Text style={styles.LinkText}>Diary</Text>
         </Pressable>
       </View>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleNav('settings')}}>
+        <Pressable 
+            onPress={ () => {handleNav('settings')}}
+            accessible={true} 
+            accessibilityLabel="View Settings"
+            accessibilityRole="button">
           <Text style={styles.LinkText}>Settings</Text>
         </Pressable>
       </View>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleNav('about')}}>
+        <Pressable 
+            onPress={ () => {handleNav('about')}}
+            accessible={true} 
+            accessibilityLabel="View About Page"
+            accessibilityRole="button">
           <Text style={styles.LinkText}>About</Text>
         </Pressable>
       </View>
       <View style={styles.LinkView}>
-        <Pressable onPress={ () => {handleLogOut()}}>
+        <Pressable 
+            onPress={ () => {handleLogOut()}}
+            accessible={true} 
+            accessibilityLabel="Logout"
+            accessibilityHint="Tap here to log out of your account."
+            accessibilityRole="button">
           <Text style={styles.LinkText}>Logout</Text>
         </Pressable>
       </View>

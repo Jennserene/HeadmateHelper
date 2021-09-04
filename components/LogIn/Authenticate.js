@@ -4,11 +4,12 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 const Authenticate = (props) => {
   return (
     <Pressable
-      disabled={!props.request}
-      onPress={() => {
-        props.promptAsync()
-      }}
-    >
+        disabled={!props.request}
+        onPress={() => {props.promptAsync()}}
+        accessible={true} 
+        accessibilityLabel="Sign in with Google"
+        accessibilityHint="Signs you in using Google"
+        accessibilityRole='button'>
       <View style={styles.GoogleLogInButton}>
         <Text>Sign In With Google</Text>
       </View>

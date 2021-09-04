@@ -48,20 +48,38 @@ const SwitchMenuContents = (props) => {
     <View>
       <Text style={styles.HeaderText}>Who is Front?</Text>
       <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchButtons} onPress={ () => {MakeAlterFront()}}>
+        <Pressable 
+            style={styles.SwitchButtons} 
+            onPress={ () => {MakeAlterFront()}}
+            accessible={true} 
+            accessibilityLabel="Switch to selected Alter"
+            accessibilityHint="Select an alter on the right and then press this button to switch to that alter."
+            accessibilityRole="button">
           <Text>Switch</Text></Pressable>
         <SwitchMenuPicker handlePicker={handlePicker} />
       </View>
       { nameErrorExists && <Text style={styles.NameErrorText}>{nameError}</Text> }
       <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchPressable} onPress={ () => {ToggleMenuState()}}>
+        <Pressable 
+            style={styles.SwitchPressable} 
+            onPress={ () => {ToggleMenuState()}}
+            accessible={true} 
+            accessibilityLabel="Create new alter"
+            accessibilityHint="If you have not yet registered yourself in this app, tap here to register yourself."
+            accessibilityRole="button">
           <View style={styles.SwitchButtons}>
             <Text>Switch</Text>
           </View>
         <Text style={styles.SelectionText}>New Alter</Text></Pressable>
       </View>
       <View style={styles.SelectionView}>
-        <Pressable style={styles.SwitchPressable} onPress={ () => {MakeUnknownFront()}}>
+        <Pressable 
+            style={styles.SwitchPressable} 
+            onPress={ () => {MakeUnknownFront()}}
+            accessible={true} 
+            accessibilityLabel="Switch to blurry or unknown"
+            accessibilityHint="If you are not sure who you are, or are a mix of different people, tap here."
+            accessibilityRole="button">
           <View style={styles.SwitchButtons}>
             <Text>Switch</Text>
           </View>

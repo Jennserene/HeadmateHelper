@@ -16,6 +16,9 @@ const NewMsgField = (props) => {
   }
 
   const SubmitMsg = async () => {
+    if (msgText == '') {
+      return
+    }
     try {
       const timeDate = await firebase.firestore.FieldValue.serverTimestamp()
       const newMsg = {
@@ -45,7 +48,13 @@ const NewMsgField = (props) => {
           placeholder="Your Msg Here"
           value={msgText}
           onChangeText={text => HandleMsgText(text)}/>
-      <Pressable style={styles.submitButton} onPress={() => SubmitMsg()}>
+      <Pressable 
+          style={styles.submitButton} 
+          onPress={() => SubmitMsg()}
+          accessible={true} 
+          accessibilityLabel="Send Message"
+          accessibilityHint="Sends the message you typed in."
+          accessibilityRole='button'>
         <Text style={styles.submitContents}>&gt;</Text>
       </Pressable>
     </View>

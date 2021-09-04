@@ -29,11 +29,18 @@ const MainMenu = (props) => {
             <MainMenuRight 
             allRooms={allRooms}
             handleRoomChange={handleRoomChange} 
-            toggleMainMenu={toggleMainMenu} />
+            toggleMainMenu={toggleMainMenu}
+            handleNav={handleNav} />
           </View>
         </View>
       </View>
-      <Pressable style={styles.ClickOutPressable} onPress={ () => MainToggle()}>
+      <Pressable 
+          style={styles.ClickOutPressable} 
+          onPress={ () => MainToggle()}
+          accessible={true} 
+          accessibilityLabel="Exit main menu"
+          accessibilityHint="Tap here to exit the main menu"
+          accessibilityRole="button">
         <View style={styles.ClickOutView} />
       </Pressable>
     </View>
@@ -68,6 +75,7 @@ const styles = StyleSheet.create({
   },
   RightMenuView: {
     paddingLeft: 10,
+    width: '60%',
   },
   ClickOutView: {
     backgroundColor: 'rgba(52, 52, 52, 0.8)',

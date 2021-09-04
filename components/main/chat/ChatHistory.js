@@ -58,6 +58,7 @@ const ChatHistory = (props) => {
   }, [newMsg])
 
   useEffect( () => {
+    setDocumentData(null)
     // Retrieve Data
     retrieveData = async () => {
       try {
@@ -93,7 +94,7 @@ const ChatHistory = (props) => {
       }
     };
     retrieveData()
-  }, [])
+  }, [roomID])
 
   // Retrieve More
   const retrieveMore = async () => {

@@ -9,6 +9,7 @@ import Settings from './main/Settings'
 import About from './main/About'
 import Reminders from './main/Reminders'
 import Diary from './main/Diary'
+import ManageRooms from './main/ManageRooms'
 
 const Main = (props) => {
 
@@ -37,26 +38,67 @@ const Main = (props) => {
       setSystemName(dbSystemName)
     }
     getSystemName()
+    // Get all the rooms
     const getAllRooms = async () => {
-      const dbRooms = await context.db.collection("users").doc(context.user.uid).collection('rooms').get()
-      let roomNames = [] // Holder of names, contains many
-      dbRooms.forEach((doc) => {
-        roomNames.push(doc.get('roomName')) // Add names of rooms to array roomNames
+      const dbRooms = await context.db.collection("users").doc(context.user.uid).collection('rooms')
+      const dbOrderedRooms = await dbRooms.orderBy('createdAt')
+      const dbRoomsList = await dbOrderedRooms.get()
+      let roomNames = [] // Holder of names, contains many [name, id] arrays
+      dbRoomsList.forEach((doc) => {
+        let subArr = []
+        subArr.push(doc.get('roomName')) // Add names of rooms to array roomNames
+        subArr.push(doc.id) // Add ids too
+        roomNames.push(subArr)
       })
+
       setAllRooms(roomNames)
+      setCurrentRoom(roomNames[0][0])
     }
     getAllRooms()
   }, [])
 
+  // Run this every time someone navigates to a different page.
   const handleNav = (page) => {
     setNav(page)
     toggleMainMenu()
   }
 
+  // Run this every time someone navigates to a different room
   const handleRoomChange = (room) => {
     setCurrentRoom(room)
     setNav('chat')
     toggleMainMenu()
+  }
+
+  // Delete a room from allRooms
+  const handleRoomDelete = (roomID) => {
+    let roomArr = [...allRooms]
+    for (let i = 0; i < roomArr.length; i++) {
+      if (roomArr[i][1] == roomID) {
+        roomArr.splice(i, 1)
+        break
+      }
+    }
+    setAllRooms(roomArr)
+  }
+
+  // Update a room's name in allRooms
+  const handleRoomUpdate = (roomID, roomName) => {
+    let roomArr = [...allRooms]
+    for (let i = 0; i < roomArr.length; i++) {
+      if (roomArr[i][1] == roomID) {
+        roomArr[i][0] = roomName
+        break
+      }
+    }
+    setAllRooms(roomArr)
+  }
+
+  // Add a room to allRooms
+  const handleRoomAdd = (roomName, roomID) => {
+    let roomArr = [...allRooms]
+    roomArr.push([roomName, roomID])
+    setAllRooms(roomArr)
   }
 
   return (
@@ -68,6 +110,11 @@ const Main = (props) => {
         { nav == 'diary' && <Diary /> }
         { nav == 'settings' && <Settings /> }
         { nav == 'about' && <About /> }
+        { nav == 'manageRooms' && <ManageRooms 
+                                    allRooms={allRooms} 
+                                    handleRoomDelete={handleRoomDelete} 
+                                    handleRoomUpdate={handleRoomUpdate}
+                                    handleRoomAdd={handleRoomAdd} />}
       </View>
       { switchMenuOpen && <SwitchMenu 
                             style={styles.SwitchMenu} 

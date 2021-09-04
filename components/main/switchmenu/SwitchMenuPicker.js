@@ -20,6 +20,9 @@ const SwitchMenuPicker = (props) => {
   const [selectedValue, setSelectedValue] = useState(defaultFront())
 
   const PopulatePicker = () => {
+    if (context.allAlters == null) {
+      return
+    }
     return context.allAlters.map( (alter) => {
       if (alter !== 'Unknown') {
         return <Picker.Item key={alter} style={styles.Item} label={alter} value={alter} />

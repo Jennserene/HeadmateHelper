@@ -98,9 +98,21 @@ const SwitchMenuNewAlter = (props) => {
         </View>
       </View>
       <View style={styles.ButtonsView}>
-        <Pressable style={styles.GoBackButton} onPress={ () => {ToggleMenuState()}}>
+        <Pressable 
+            style={styles.GoBackButton} 
+            onPress={ () => {ToggleMenuState()}}
+            accessible={true} 
+            accessibilityLabel="Go back"
+            accessibilityHint="Go back to the switch menu"
+            accessibilityRole="button">
           <Text>Go Back</Text></Pressable>
-        <Pressable style={styles.SubmitButton} onPress={ () => {SubmitAlter()}}>
+        <Pressable 
+            style={styles.SubmitButton} 
+            onPress={ () => {SubmitAlter()}}
+            accessible={true} 
+            accessibilityLabel="Submit new alter"
+            accessibilityHint="Once you have typed in a name for yourself, tap here to register yourself."
+            accessibilityRole="button">
           <Text>Submit</Text></Pressable>
       </View>
     </View>

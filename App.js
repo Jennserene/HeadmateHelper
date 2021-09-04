@@ -81,6 +81,9 @@ const App = () => {
               alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
             })
             setAllAlters(alterNames2)
+            if (alterNames2 == null) {
+              console.error('allAlters is null')
+            }
             // Bring up switch menu right away
             setMainMenuOpen(false)
             setSwitchMenuOpen(true)
