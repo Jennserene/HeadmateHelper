@@ -7,8 +7,6 @@ const Authenticate = (props) => {
 
   const [ signingUp, setSigningUp ] = useState(false)
 
-  const { handleLogIn } = props
-
   const toggleSigningUp = () => {
     setSigningUp(!signingUp)
   }
@@ -16,11 +14,9 @@ const Authenticate = (props) => {
   return (
     <View style={styles.ContainerView}>
       { !signingUp && <SignIn 
-                        toggleSigningUp={toggleSigningUp} 
-                        handleLogIn={handleLogIn} /> }
+                        toggleSigningUp={toggleSigningUp} /> }
       { signingUp && <SignUp 
-                        toggleSigningUp={toggleSigningUp} 
-                        handleLogIn={handleLogIn} /> }
+                        toggleSigningUp={toggleSigningUp} /> }
     </View>
   )
 }

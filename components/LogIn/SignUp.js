@@ -12,7 +12,7 @@ const SignUp = (props) => {
   const [ errorCode, setErrorCode ] = useState('')
   const [ errorMessage, setErrorMessage ] = useState('')
 
-  const { toggleSigningUp, handleLogIn } = props
+  const { toggleSigningUp } = props
 
   const handleEmailText = (text) => {
     setEmailText(text)
@@ -38,7 +38,6 @@ const SignUp = (props) => {
       setRepeatError('')
       setErrorCode('')
       setErrorMessage('')
-      handleLogIn(user)
     } catch (err) {
       setErrorCode(err.code)
       setErrorMessage(err.message)

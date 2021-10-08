@@ -8,12 +8,9 @@ const LogIn = (props) => {
 
   const context = useContext(Context)
 
-  const { handleLogIn } = props
-
   return (
     <View style={styles.logInView}>
-      { !context.user && <Authenticate  
-                            handleLogIn={handleLogIn} /> }
+      { !context.user && <Authenticate /> }
       { context.user && <CreateSystem initializeAccount={props.initializeAccount} /> }
     </View>
   );

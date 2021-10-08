@@ -10,7 +10,7 @@ const SignIn = (props) => {
   const [ errorCode, setErrorCode ] = useState('')
   const [ errorMessage, setErrorMessage ] = useState('')
 
-  const { toggleSigningUp, handleLogIn } = props
+  const { toggleSigningUp } = props
 
   const handleEmailText = (text) => {
     setEmailText(text)
@@ -27,7 +27,6 @@ const SignIn = (props) => {
       const user = userCredential.user
       setErrorCode('')
       setErrorMessage('')
-      handleLogIn(user)
     } catch (err) {
       setErrorCode(err.code)
       setErrorMessage(err.message)

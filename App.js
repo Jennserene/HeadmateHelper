@@ -180,11 +180,6 @@ const App = () => {
     }
   }
 
-  // Log in with email and password
-  const handleLogIn = (user) => {
-    setUser(user)
-  }
-
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
@@ -208,8 +203,7 @@ const App = () => {
             {/* If your account has not finished initializing display the logIn component */}
             { !accountInit && <LogIn
                                 accountInit={accountInit}  
-                                initializeAccount={initializeAccount} 
-                                handleLogIn={handleLogIn} /> }
+                                initializeAccount={initializeAccount} /> }
             {/* If your account has finished initializing display the Main component */}
             { accountInit && <Main 
                                 switchMenuOpen={switchMenuOpen} 
