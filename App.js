@@ -1,17 +1,25 @@
-import ApiKeys from './constants/ApiKeys'
-import * as firebase from 'firebase'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import * as WebBrowser from 'expo-web-browser';
-import { ResponseType } from 'expo-auth-session';
-import * as Google from 'expo-auth-session/providers/google';
-import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+// import react and react-native display components
 import React, { useState, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
+
+// import firebase
+import ApiKeys from './constants/ApiKeys'
+import * as firebase from 'firebase'
+
+// import Expo
+import * as WebBrowser from 'expo-web-browser';
+import * as Google from 'expo-auth-session/providers/google';
+import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
+
+// import context
+import Context from './Context'
+
+// import components
 import Header from './components/Header'
 import LogIn from './components/LogIn'
 import Main from './components/Main'
 import LoadingScreen from './components/LoadingScreen'
-import Context from './Context'
+
 
 // Initialize Firebase
 !firebase.apps.length && firebase.initializeApp(ApiKeys.FirebaseConfig);
@@ -24,7 +32,7 @@ const App = () => {
   const db = firebase.firestore()
 
   // Set State
-  const [loggedIn, setLoggedIn] = useState(null)
+  const [user, setUser] = useState(null)
   const [accountInit, setAccountInit] = useState(false)
   const [frontName, setFrontName] = useState('Unknown')
   const [frontID, setFrontID] = useState(null)
@@ -33,11 +41,11 @@ const App = () => {
   const [allAlters, setAllAlters] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  // Check if user is already logged in and then set them to loggedIn.
+  // Check if user is already logged in and then set them to user.
   useEffect( () => {
     try {
-      firebase.auth().onAuthStateChanged( async (user) => {
-        user ? setLoggedIn(user) : setLoggedIn(null) // is the user logged in? If so setLoggedIn to user
+      firebase.auth().onAuthStateChanged( async (currUser) => {
+        currUser ? setUser(currUser) : setUser(null) // is the user logged in? If so setUser to user
       })
     } catch (error) {
       console.error(error)
@@ -47,10 +55,10 @@ const App = () => {
   // Check if user account is logged in and set up state
   useEffect( () => {
     const checkIfLoggedIn = async () => {
-      if (loggedIn) {
+      if (user) {
         setLoading(true)
         try {
-          const dbUser = await db.collection("users").doc(loggedIn.uid)
+          const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
@@ -97,15 +105,15 @@ const App = () => {
       
     }
     checkIfLoggedIn()
-  }, [loggedIn]) // update on loggedIn being changed
+  }, [user]) // update on user being changed
 
   // if you are not logged in, your account can't be initialized
   useEffect( () => {
     const hideHeader = () => {
-      !loggedIn && setAccountInit(false)
+      !user && setAccountInit(false)
     }
     hideHeader()
-  }, [loggedIn, accountInit]) // update every time loggedIn or accountInit changes
+  }, [user, accountInit]) // update every time user or accountInit changes
 
   // LOGIN WITH GOOGLE
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
@@ -121,7 +129,7 @@ const App = () => {
         const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
         firebase.auth().signInWithCredential(credential);
         const user = await firebase.auth().currentUser
-        setLoggedIn(user)
+        setUser(user)
       }
     }
     logInUsingGoogle()
@@ -139,7 +147,7 @@ const App = () => {
     firebase.auth().signOut()
     setMainMenuOpen(false)
     setAccountInit(false)
-    setLoggedIn(null)
+    setUser(null)
   }
 
   // Toggle whether the switch menu is open or not
@@ -163,7 +171,7 @@ const App = () => {
 
   // Set alter as front
   const makeAlterFront = async (alterName) => {
-    const dbUser = await db.collection("users").doc(loggedIn.uid)
+    const dbUser = await db.collection("users").doc(user.uid)
     const querySnapshot = await dbUser.collection('alters').where('name', '==', alterName).get() // Get query of alters named alterName
     let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
     let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
@@ -192,13 +200,18 @@ const App = () => {
     }
   }
 
+  // Log in with email and password
+  const handleLogIn = (user) => {
+    setUser(user)
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
       { loading ? // if app is loading, display loading screen.
         <LoadingScreen /> :
         <Context.Provider value={{ // set global state
-          user: loggedIn,
+          user: user,
           db: db,
           frontName: frontName,
           frontID: frontID,
@@ -217,7 +230,8 @@ const App = () => {
                                 accountInit={accountInit} 
                                 request={request} 
                                 promptAsync={promptAsync} 
-                                initializeAccount={initializeAccount} /> }
+                                initializeAccount={initializeAccount} 
+                                handleLogIn={handleLogIn} /> }
             {/* If your account has finished initializing display the Main component */}
             { accountInit && <Main 
                                 switchMenuOpen={switchMenuOpen} 
