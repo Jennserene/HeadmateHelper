@@ -115,26 +115,6 @@ const App = () => {
     hideHeader()
   }, [user, accountInit]) // update every time user or accountInit changes
 
-  // LOGIN WITH GOOGLE
-  const [request, response, promptAsync] = Google.useIdTokenAuthRequest(
-    {
-      clientId: '967966221796-n6j2t7vutdgglv42lhmnguau9qrp9f8f.apps.googleusercontent.com',
-      },
-  );
-  useEffect( () => {
-    const logInUsingGoogle = async () => {
-      if (response?.type === 'success') {
-        const { id_token } = response.params;
-        
-        const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
-        firebase.auth().signInWithCredential(credential);
-        const user = await firebase.auth().currentUser
-        setUser(user)
-      }
-    }
-    logInUsingGoogle()
-  }, [response]);
-
   // Initialize the account
   const initializeAccount = () => {
     setAccountInit(true)
@@ -227,9 +207,7 @@ const App = () => {
             {/* ROUTING HAPPENS HERE */}
             {/* If your account has not finished initializing display the logIn component */}
             { !accountInit && <LogIn
-                                accountInit={accountInit} 
-                                request={request} 
-                                promptAsync={promptAsync} 
+                                accountInit={accountInit}  
                                 initializeAccount={initializeAccount} 
                                 handleLogIn={handleLogIn} /> }
             {/* If your account has finished initializing display the Main component */}
