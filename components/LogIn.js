@@ -8,9 +8,14 @@ const LogIn = (props) => {
 
   const context = useContext(Context)
 
+  const { request, promptAsync, handleLogIn } = props
+
   return (
     <View style={styles.logInView}>
-      { !context.user && <Authenticate request={props.request} promptAsync={props.promptAsync} /> }
+      { !context.user && <Authenticate 
+                            request={request} 
+                            promptAsync={promptAsync} 
+                            handleLogIn={handleLogIn} /> }
       { context.user && <CreateSystem initializeAccount={props.initializeAccount} /> }
     </View>
   );

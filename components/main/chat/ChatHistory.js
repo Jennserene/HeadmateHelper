@@ -161,7 +161,7 @@ const ChatHistory = (props) => {
         renderItem={({ item }) => (
           <View style={styles.ContView}>
             <View style={styles.AvatarView}>
-
+              
             </View>
             <View style={styles.TextView}>
               <View style={styles.HeaderView}>
