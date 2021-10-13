@@ -8,35 +8,18 @@ const AlterSelection = (props) => {
 
   const { alter, viewAlter } = props
 
-  const [alterID, setAlterID] = useState(null)
+  const [alterID, setAlterID] = useState(alter.id)
 
   const handleView = () => {
-    viewAlter([alter, alterID])
+    viewAlter(alter)
   }
-
-  useEffect( () => {
-    const getAlterID = async () => {
-      const dbUser = await context.db.collection("users").doc(context.user.uid)
-      const querySnapshot = await dbUser.collection('alters').where('name', '==', alter).get() // Get query of alters named alter
-      let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
-      querySnapshot.forEach((doc) => {
-        alterIDs.push(doc.id) // add ids of alters named alter to array alterIDs
-      })
-      if (alterIDs.length == 1) {
-        setAlterID(alterIDs[0]) // set alterID to alterName's ID
-      } else {
-        console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED ${alterName}`)
-      }
-    }
-    getAlterID()
-  }, [])
 
   return (
     <View style={styles.Container}>
       <Pressable style={styles.ButtonsPressable} onPress={ () => {handleView()}}>
         <Text>View Profile</Text>
       </Pressable>
-      <Text style={styles.AlterText}>{alter}</Text>
+      <Text style={styles.AlterText}>{alter.name}</Text>
     </View>
   );
 }

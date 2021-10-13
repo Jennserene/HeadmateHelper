@@ -6,9 +6,9 @@ import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
 import ApiKeys from './constants/ApiKeys'
 import * as firebase from 'firebase'
 
+
 // import Expo
 import * as WebBrowser from 'expo-web-browser';
-import * as Google from 'expo-auth-session/providers/google';
 import { StatusBar as ExpoStatusBar } from 'expo-status-bar';
 
 // import context
@@ -34,8 +34,7 @@ const App = () => {
   // Set State
   const [user, setUser] = useState(null)
   const [accountInit, setAccountInit] = useState(false)
-  const [frontName, setFrontName] = useState('Unknown')
-  const [frontID, setFrontID] = useState(null)
+  const [front, setFront] = useState({name: 'Unknown', id: 'unknown'})
   const [switchMenuOpen, setSwitchMenuOpen] = useState(false)
   const [mainMenuOpen, setMainMenuOpen] = useState(false)
   const [allAlters, setAllAlters] = useState(null)
@@ -67,30 +66,23 @@ const App = () => {
               return false
             }
           })
-          if (init === 'true') { // Set front to Unknown
+          if (init === 'true') {
             setAccountInit(true) // If user account initialized, setAccountInit to true, otherwise set to false
-            const querySnapshot = await dbUser.collection('alters').where('name', '==', 'Unknown').get() // Get query of alters named Unknown
-            let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
-            let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
-            querySnapshot.forEach((doc) => {
-              alterIDs.push(doc.id) // add ids of alters named Unknown to array alterIDs
-              alterNames.push(doc.get('name')) // add names of alters named Unknown to array alterNames
-            })
-            if (alterIDs.length == 1) {
-              setFrontID(alterIDs[0]) // set front ID to Unknown's ID
-              setFrontName(alterNames[0]) // set front name to Unknown's name
-            } else {
-              console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED UNKNOWN`) // Change this to match whoever should be front
-            }
             // Get list of all alters
-            const querySnapshot2 = await dbUser.collection('alters').get() // Get query of all alters
-            let alterNames2 = [] // Holder of names, contains many
-            querySnapshot2.forEach((doc) => {
-              alterNames2.push(doc.get('name')) // Add names of alters to array alterNames2
-            })
-            setAllAlters(alterNames2)
-            if (alterNames2 == null) {
-              console.error('allAlters is null')
+            try {
+              const querySnapshot = await dbUser.collection('alters').orderBy('lastFront', 'desc').get() // Get query of all alters
+              let alterNames = [] // Holder of alters, contains many
+              querySnapshot.forEach((doc) => {
+                alterNames.push({ // Add alter info to array alterNames
+                  name: doc.get('name'), 
+                  id: doc.id, 
+                  lastFront: doc.get('lastFront'),
+                  proxy: doc.get('proxy'),
+                }) 
+              })
+              setAllAlters(alterNames)
+            } catch (err) {
+              console.error(err)
             }
             // Bring up switch menu right away
             setMainMenuOpen(false)
@@ -143,37 +135,54 @@ const App = () => {
   }
 
   // Add alter to allAlters
-  const addAlter = (alterName) => {
-    let names = allAlters
-    names.push(alterName)
-    setAllAlters(names)
+  const addAlter = (alter) => {
+    let alters = allAlters
+    alters.unshift(alter)
+    setAllAlters(alters)
   }
 
   // Set alter as front
-  const makeAlterFront = async (alterName) => {
-    const dbUser = await db.collection("users").doc(user.uid)
-    const querySnapshot = await dbUser.collection('alters').where('name', '==', alterName).get() // Get query of alters named alterName
-    let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
-    let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
-    querySnapshot.forEach((doc) => {
-      alterIDs.push(doc.id) // add ids of alters named alterName to array alterIDs
-      alterNames.push(doc.get('name')) // add names of alters named alterName to array alterNames
-    })
-    if (alterIDs.length == 1) {
-      setFrontID(alterIDs[0]) // set front ID to alterName's ID
-      setFrontName(alterNames[0]) // set front name to alterName's name
-    } else {
-      console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED ${alterName}`)
+  const makeAlterFront = async (alterID) => {
+    // const dbUser = await db.collection("users").doc(user.uid)
+    // const querySnapshot = await dbUser.collection('alters').where('name', '==', alterName).get() // Get query of alters named alterName
+    // let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
+    // let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
+    // querySnapshot.forEach((doc) => {
+    //   alterIDs.push(doc.id) // add ids of alters named alterName to array alterIDs
+    //   alterNames.push(doc.get('name')) // add names of alters named alterName to array alterNames
+    // })
+    try {
+      const dbUser = await db.collection("users").doc(user.uid).collection("alters").doc(alterID).update({
+        lastFront: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      const frontAlter = allAlters.find(alter => alter.id === alterID)
+      setFront(frontAlter)
+      let alters = allAlters
+      const index = alters.indexOf(frontAlter)
+      if (index > -1) {
+        alters.splice(index, 1)
+        alters.unshift(frontAlter)
+        setAllAlters(alters)
+      }
+    } catch (err) {
+      console.error(err)
     }
+    // if (alterIDs.length == 1) {
+      
+    //   setFrontID(alterIDs[0]) // set front ID to alterName's ID
+    //   setFrontName(alterNames[0]) // set front name to alterName's name
+    // } else {
+    //   console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED ${alterName}`)
+    // }
   }
 
   // Rename an alter
   const renameAlter = (newName) => {
-    if (newName !== frontName) {
+    if (newName !== front.name) {
       for (let i = 0; i < allAlters.length; i++ ) {
-        if (allAlters[i] == frontName) {
-          allAlters[i] = newName
-          setFrontName(newName)
+        if (allAlters[i].id == front.id) {
+          allAlters[i].name = newName
+          setFront(allAlters[i])
           return
         }
       }
@@ -188,8 +197,7 @@ const App = () => {
         <Context.Provider value={{ // set global state
           user: user,
           db: db,
-          frontName: frontName,
-          frontID: frontID,
+          front: front,
           allAlters: allAlters,
         }}>
           <View style={styles.header}>

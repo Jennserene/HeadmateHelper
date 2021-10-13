@@ -22,17 +22,17 @@ const SwitchMenuContents = (props) => {
 
   // Make Unknown Front
   const MakeUnknownFront = () => {
-    makeAlterFront('Unknown')
+    makeAlterFront('unknown')
     SwitchToggle()
   }
 
   // Change picker selection
-  const handlePicker = (alter) => {
-    setPickerSelection(alter)
+  const handlePicker = (alterID) => {
+    setPickerSelection(alterID)
   }
 
   // Make selected alter front
-  const MakeAlterFront = () => {
+  const MakePickedAlterFront = () => {
     if (!pickerSelection || pickerSelection == 'default') {
       setNameErrorExists(true)
       setNameError('You must select an alter!')
@@ -50,7 +50,7 @@ const SwitchMenuContents = (props) => {
       <View style={styles.SelectionView}>
         <Pressable 
             style={styles.SwitchButtons} 
-            onPress={ () => {MakeAlterFront()}}
+            onPress={ () => {MakePickedAlterFront()}}
             accessible={true} 
             accessibilityLabel="Switch to selected Alter"
             accessibilityHint="Select an alter on the right and then press this button to switch to that alter."

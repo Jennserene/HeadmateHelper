@@ -10,10 +10,10 @@ const SwitchMenuPicker = (props) => {
   const context = useContext(Context)
 
   const defaultFront = () => {
-    if (context.frontName == 'Unknown') {
+    if (context.front.name == 'Unknown') {
       return 'default'
     } else {
-      return context.frontName
+      return context.front.name
     }
   }
 
@@ -24,15 +24,15 @@ const SwitchMenuPicker = (props) => {
       return
     }
     return context.allAlters.map( (alter) => {
-      if (alter !== 'Unknown') {
-        return <Picker.Item key={alter} style={styles.Item} label={alter} value={alter} />
+      if (alter.name !== 'Unknown') {
+        return <Picker.Item key={alter.id} style={styles.Item} label={alter.name} value={alter.id} />
       }
     })
   }
 
-  const PassUpPickedAlter = (alter) => {
-    setSelectedValue(alter)
-    handlePicker(alter)
+  const PassUpPickedAlter = (alterID) => {
+    setSelectedValue(alterID)
+    handlePicker(alterID)
   }
 
   return (

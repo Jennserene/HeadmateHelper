@@ -70,7 +70,7 @@ const ViewAlter = (props) => {
         <Pressable style={styles.ButtonsPressable} onPress={ () => {handleGoBack()}}>
           <Text>Go Back</Text>
         </Pressable>
-        { context.frontName == alterData.name ? 
+        { context.front.id == alterData.id ? 
         <Pressable style={styles.ButtonsPressable} onPress={ () => {handleEdit()}}>
           <Text>Edit</Text>
         </Pressable> : <Text>This Alter must be front to edit</Text> }

@@ -38,7 +38,7 @@ const SwitchMenuNewAlter = (props) => {
       setNameError('A name is required!')
       return
     }
-    if (context.allAlters.includes(name)) { // If there is already an alter by that name
+    if (context.allAlters.some( alter => alter.name === name )) { // If there is already an alter by that name
       setNameErrorExists(true)
       setNameError('There is already an alter by that name!')
       return
@@ -46,26 +46,21 @@ const SwitchMenuNewAlter = (props) => {
     let dbNewAlter = null
     try {
       const dbAlters = await context.db.collection('users').doc(context.user.uid).collection('alters')
-      if (!proxy) { // If there is no proxy
-        dbNewAlter = await dbAlters.add({
-          name: name,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        })
-      } else { // If there is a proxy
-        dbNewAlter = await dbAlters.add({
-          name: name,
-          proxy: proxy,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        })
-      }
-
+      dbNewAlter = await dbAlters.add({
+        name: name,
+        proxy: proxy,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      addAlter({ // Add alter to allAlters
+        name: name,
+        id: dbNewAlter.id,
+        proxy: proxy,
+      })
+      await makeAlterFront(dbNewAlter.id) // Make this new alter be front
     } catch (err) {
       console.error(err)
       return
     }
-    
-    addAlter(name)
-    makeAlterFront(name)
 
     // Reset input field
     setName('')

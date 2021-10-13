@@ -8,6 +8,7 @@ const CreateSystem = (props) => {
   const context = useContext(Context)
 
   const [systemName, setSystemName] = useState('')
+  const [error, setError] = useState(null)
 
   const HandleSystemState = (name) => {
     setSystemName(name)
@@ -15,7 +16,7 @@ const CreateSystem = (props) => {
 
   const SubmitSystem = async () => {
     if (systemName == '') {
-      // TODO: add an error message here
+      setError('Your system name can not be blank.')
       return
     }
     try {
@@ -24,16 +25,18 @@ const CreateSystem = (props) => {
         accountInit: true
       }, {merge: true})
       const dbUser = context.db.collection('users').doc(context.user.uid)
-      const initFront = await dbUser.collection('alters').add({ // create 'alters' collection inside user doc
-        name: 'Unknown'
+      const initFront = await dbUser.collection('alters').doc('unknown').set({ // create 'alters' collection inside user doc
+        name: 'Unknown',
+        lastFront: firebase.firestore.FieldValue.serverTimestamp()
       })
       const room = await dbUser.collection('rooms').add({ // create 'rooms' collection inside user doc
         roomName: 'Main',
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
+      setError(null)
       props.initializeAccount() // set accountInit to true
-    } catch (error) {
-      console.error(error)
+    } catch (err) {
+      console.error(err)
     }
   }
 
@@ -45,6 +48,7 @@ const CreateSystem = (props) => {
       <Text>
         You can change this later.
       </Text>
+      { error ? <Text>{error}</Text> : null }
       <View style={styles.SystemInput}>
         <TextInput
           style={styles.InputField}

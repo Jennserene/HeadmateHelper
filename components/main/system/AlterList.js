@@ -11,8 +11,8 @@ const AlterList = (props) => {
 
   const printAlters = () => {
     return context.allAlters.map( (alter) => {
-      if (alter !== 'Unknown') {
-        return <AlterSelection key={`sel-${alter}`} alter={alter} viewAlter={viewAlter} />
+      if (alter.id !== 'unknown') {
+        return <AlterSelection key={`sel-${alter.id}`} alter={alter} viewAlter={viewAlter} />
       }
     })
   }

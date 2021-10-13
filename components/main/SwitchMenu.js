@@ -52,7 +52,7 @@ const SwitchMenu = (props) => {
 const styles = StyleSheet.create({
   ContainerView: {
     flex: 1,
-    width: '100%'
+    width: '100%',
   },
   MenuView: {
     width: '100%',
