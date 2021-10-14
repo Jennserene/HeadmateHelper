@@ -132,19 +132,21 @@ const Main = (props) => {
                                         handleRoomUpdate={handleRoomUpdate}
                                         handleRoomAdd={handleRoomAdd} />}
           </View>
-          { switchMenuOpen && <SwitchMenu 
-                                style={styles.SwitchMenu} 
-                                toggleSwitchMenu={toggleSwitchMenu}
-                                addAlter={addAlter}
-                                makeAlterFront={makeAlterFront} /> }
-          { mainMenuOpen && <MainMenu 
-                              style={styles.MainMenu} 
-                              toggleMainMenu={toggleMainMenu} 
-                              systemName={systemName} 
-                              logOut={logOut} 
-                              handleNav={handleNav} 
-                              allRooms={allRooms} 
-                              handleRoomChange={handleRoomChange}/> }
+          { (switchMenuOpen && context.allAlters) && 
+              <SwitchMenu 
+                style={styles.SwitchMenu} 
+                toggleSwitchMenu={toggleSwitchMenu}
+                addAlter={addAlter}
+                makeAlterFront={makeAlterFront} /> }
+          { mainMenuOpen && 
+              <MainMenu 
+                style={styles.MainMenu} 
+                toggleMainMenu={toggleMainMenu} 
+                systemName={systemName} 
+                logOut={logOut} 
+                handleNav={handleNav} 
+                allRooms={allRooms} 
+                handleRoomChange={handleRoomChange}/> }
         </View>
       }
     </View>

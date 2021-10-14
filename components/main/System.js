@@ -45,7 +45,7 @@ const System = (props) => {
                                       toggleSystemView={toggleSystemView} 
                                       renameAlter={renameAlter} /> }
       </View>
-      { systemView == 'view' && 
+      { (systemView == 'view' && context.allAlters) && 
         <ScrollView>
           <View style={styles.AltersView}>
             <AlterList viewAlter={viewAlter}/>
