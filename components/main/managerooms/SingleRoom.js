@@ -28,10 +28,10 @@ const SingleRoom = (props) => {
       return
     }
     try {
-      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room[1]).get()
+      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).get()
       roomDB.ref.delete()
       setError('')
-      handleRoomDelete(room[1]) // remove the room from allRooms
+      handleRoomDelete(room.id) // remove the room from allRooms
     } catch (err) {
       console.error(err)
       setError('Something went wrong!')
@@ -43,13 +43,13 @@ const SingleRoom = (props) => {
       setError('Room name can not be blank')
       return
     }
-    if (allRooms.includes(roomName)) {
+    if (allRooms.some( room => room.name === roomName)) {
       setError('There is already a room by that name')
       return
     }
     try {
-      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room[1]).update({roomName: roomName})
-      handleRoomUpdate(room[1], roomName)// Update allRooms by changing this room name
+      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).update({roomName: roomName})
+      handleRoomUpdate(room.id, roomName)// Update allRooms by changing this room name
       toggleEdit()
     } catch (err) {
       console.error(err)
@@ -85,7 +85,7 @@ const SingleRoom = (props) => {
               <Text style={styles.ButtonText}>Delete</Text>
             </View>
           </Pressable>
-          <Text>{room[0]}</Text>
+          <Text>{room.name}</Text>
         </View> : null }
       { editRoom ? 
         <View style={styles.RoomView}>

@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Pressable, Switch } from 'react-native'
-import SwitchMenuPicker from './SwitchMenuPicker'
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
+import Context from '../../../Context';
+// import SwitchMenuPicker from './SwitchMenuPicker'
 
 const SwitchMenuContents = (props) => {
 
+  const context = useContext(Context)
+
   const { menuStateToggle, toggleSwitchMenu, makeAlterFront } = props
 
-  const [pickerSelection, setPickerSelection] = useState(null)
-  const [nameErrorExists, setNameErrorExists] = useState(false)
-  const [nameError, setNameError] = useState('')
+  // const [pickerSelection, setPickerSelection] = useState(null)
+  // const [nameErrorExists, setNameErrorExists] = useState(false)
+  // const [nameError, setNameError] = useState('')
 
   // Switch to New Alter menu
   const ToggleMenuState = () => {
@@ -22,35 +25,62 @@ const SwitchMenuContents = (props) => {
 
   // Make Unknown Front
   const MakeUnknownFront = () => {
-    makeAlterFront('Unknown')
+    makeAlterFront('unknown')
     SwitchToggle()
   }
 
   // Change picker selection
-  const handlePicker = (alter) => {
-    setPickerSelection(alter)
-  }
+  // const handlePicker = (alterID) => {
+  //   setPickerSelection(alterID)
+  // }
 
   // Make selected alter front
-  const MakeAlterFront = () => {
-    if (!pickerSelection || pickerSelection == 'default') {
-      setNameErrorExists(true)
-      setNameError('You must select an alter!')
-      return
-    }
-    makeAlterFront(pickerSelection)
-    setNameErrorExists(false)
-    setNameError('')
+  // const MakePickedAlterFront = () => {
+  //   if (!pickerSelection || pickerSelection == 'default') {
+  //     setNameErrorExists(true)
+  //     setNameError('You must select an alter!')
+  //     return
+  //   }
+  //   makeAlterFront(pickerSelection)
+  //   setNameErrorExists(false)
+  //   setNameError('')
+  //   SwitchToggle()
+  // }
+
+  const makeSelectedAlterFront = (alterID) => {
+    makeAlterFront(alterID)
     SwitchToggle()
   }
 
+  const printAlters = () => {
+    return context.allAlters.map( (alter) => {
+      if (alter.id !== 'unknown') {
+        return (
+          <View style={styles.SelectionView} key={`key-${alter.id}`}>
+            <Pressable 
+                style={styles.SwitchPressable} 
+                onPress={ () => {makeSelectedAlterFront(alter.id)}}
+                accessible={true} 
+                accessibilityLabel={`Switch to ${alter.name}`}
+                accessibilityRole="button">
+              <View style={styles.SwitchButtons}>
+                <Text>Switch</Text>
+              </View>
+              <Text style={styles.SelectionText}>{alter.name}</Text>
+            </Pressable>
+          </View>
+        )
+      }
+    })
+  }
+
   return (
-    <View>
+    <ScrollView>
       <Text style={styles.HeaderText}>Who is Front?</Text>
-      <View style={styles.SelectionView}>
+      {/* <View style={styles.SelectionView}>
         <Pressable 
             style={styles.SwitchButtons} 
-            onPress={ () => {MakeAlterFront()}}
+            onPress={ () => {MakePickedAlterFront()}}
             accessible={true} 
             accessibilityLabel="Switch to selected Alter"
             accessibilityHint="Select an alter on the right and then press this button to switch to that alter."
@@ -58,7 +88,7 @@ const SwitchMenuContents = (props) => {
           <Text>Switch</Text></Pressable>
         <SwitchMenuPicker handlePicker={handlePicker} />
       </View>
-      { nameErrorExists && <Text style={styles.NameErrorText}>{nameError}</Text> }
+      { nameErrorExists && <Text style={styles.NameErrorText}>{nameError}</Text> } */}
       <View style={styles.SelectionView}>
         <Pressable 
             style={styles.SwitchPressable} 
@@ -70,7 +100,8 @@ const SwitchMenuContents = (props) => {
           <View style={styles.SwitchButtons}>
             <Text>Switch</Text>
           </View>
-        <Text style={styles.SelectionText}>New Alter</Text></Pressable>
+          <Text style={styles.SelectionText}>New Alter</Text>
+        </Pressable>
       </View>
       <View style={styles.SelectionView}>
         <Pressable 
@@ -83,9 +114,11 @@ const SwitchMenuContents = (props) => {
           <View style={styles.SwitchButtons}>
             <Text>Switch</Text>
           </View>
-        <Text style={styles.SelectionText}>Blurry/Unknown</Text></Pressable>
+          <Text style={styles.SelectionText}>Blurry/Unknown</Text>
+        </Pressable>
       </View>
-    </View>
+      { printAlters() }
+    </ScrollView>
   );
 };
 

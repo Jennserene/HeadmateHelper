@@ -1,29 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
+import SignIn from './SignIn'
+import SignUp from './SignUp'
 
 const Authenticate = (props) => {
+
+  const [ signingUp, setSigningUp ] = useState(false)
+
+  const toggleSigningUp = () => {
+    setSigningUp(!signingUp)
+  }
+
   return (
-    <Pressable
-        disabled={!props.request}
-        onPress={() => {props.promptAsync()}}
-        accessible={true} 
-        accessibilityLabel="Sign in with Google"
-        accessibilityHint="Signs you in using Google"
-        accessibilityRole='button'>
-      <View style={styles.GoogleLogInButton}>
-        <Text>Sign In With Google</Text>
-      </View>
-    </Pressable>
+    <View style={styles.ContainerView}>
+      { !signingUp && <SignIn 
+                        toggleSigningUp={toggleSigningUp} /> }
+      { signingUp && <SignUp 
+                        toggleSigningUp={toggleSigningUp} /> }
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  GoogleLogInButton: {
-    height: 25,
-    width: 150,
-    alignItems: 'center',
-    backgroundColor: "teal" // TESTING BG COLOR
-  }
+  ContainerView: {
+    width: '70%',
+  },
 })
 
 export default Authenticate

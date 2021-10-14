@@ -17,7 +17,7 @@ const EditRooms = (props) => {
   const printRooms = () => {
     return allRooms.map( (room) => {
       return <SingleRoom 
-                key={room[1]}
+                key={room.id}
                 room={room} 
                 allRooms={allRooms}
                 handleRoomDelete={handleRoomDelete}

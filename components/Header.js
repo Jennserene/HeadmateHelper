@@ -18,7 +18,7 @@ const Header = (props) => {
       </View>
       {/* TITLE AREA - SHOWS WHO IS FRONT */}
       <View style={styles.titleArea}>
-        <Text style={styles.titleText}>Front: {context.frontName}</Text>
+        <Text style={styles.titleText}>Front: {context.front.name}</Text>
       </View>
       {/* SWITCH BUTTON */}
       <View style={styles.switchArea}>

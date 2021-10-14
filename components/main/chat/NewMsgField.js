@@ -23,7 +23,7 @@ const NewMsgField = (props) => {
       const timeDate = await firebase.firestore.FieldValue.serverTimestamp()
       const newMsg = {
         avatar: null,
-        author: context.frontName,
+        author: context.front.name,
         text: msgText,
         createdAt: timeDate
       }
@@ -37,8 +37,6 @@ const NewMsgField = (props) => {
     
     // Reset input field
     setMsgText('')
-    
-    // updateNewMsg(newMsg)
   }
 
   return (

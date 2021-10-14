@@ -12,13 +12,13 @@ const MainMenuRight = (props) => {
   const printAllRooms = () => {
     if (allRooms) {
       return allRooms.map( (room) => {
-        return <View key={room[0]} style={styles.LinkView}>
+        return <View key={room.id} style={styles.LinkView}>
         <Pressable 
-            onPress={ () => {changeRoom(room[0])}}
+            onPress={ () => {changeRoom(room)}}
             accessible={true} 
-            accessibilityLabel={`Open the ${room[0]} room.`}
+            accessibilityLabel={`Open the ${room.name} room.`}
             accessibilityRole="button">
-          <Text style={styles.LinkText}>{room[0]}</Text>
+          <Text style={styles.LinkText}>{room.name}</Text>
         </Pressable>
       </View>
       })
