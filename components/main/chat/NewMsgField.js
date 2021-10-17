@@ -15,16 +15,35 @@ const NewMsgField = (props) => {
     setMsgText(text)
   }
 
+  const CheckForProxies = () => {
+    for (i = 0; i < context.allAlters.length; i++) {
+      if (context.allAlters[i].proxy === ('' || null || undefined)) {
+        continue
+      }
+      if (msgText.startsWith(context.allAlters[i].proxy)) {
+        const proxyLen = context.allAlters[i].proxy.length
+        let tempMsg = msgText
+        tempMsg = tempMsg.substring(proxyLen)
+        if (tempMsg.startsWith(' ')) {
+          tempMsg = tempMsg.substring(1)
+        }
+        return [context.allAlters[i].name, tempMsg]
+      }
+    }
+    return [context.front.name, msgText]
+  }
+
   const SubmitMsg = async () => {
     if (msgText == '') {
       return
     }
+    const [modAuthor, modMsgText] = CheckForProxies()
     try {
       const timeDate = await firebase.firestore.FieldValue.serverTimestamp()
       const newMsg = {
         avatar: null,
-        author: context.front.name,
-        text: msgText,
+        author: modAuthor,
+        text: modMsgText,
         createdAt: timeDate
       }
       const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')

@@ -29,7 +29,8 @@ const Main = (props) => {
           toggleMainMenu, 
           mainMenuOpen, 
           logOut, 
-          renameAlter } = props
+          renameAlter,
+          reproxyAlter } = props
 
   // set state on mount
   useEffect( () => {
@@ -121,7 +122,7 @@ const Main = (props) => {
         <View style={styles.MainView}>
           <View style={styles.ContentView}>
             { (nav == 'chat' && currentRoom) && <Chat currentRoom={currentRoom} /> }
-            { nav == 'system' && <System renameAlter={renameAlter}/> }
+            { nav == 'system' && <System renameAlter={renameAlter} reproxyAlter={reproxyAlter} /> }
             { nav == 'reminders' && <Reminders /> }
             { nav == 'diary' && <Diary /> }
             { nav == 'settings' && <Settings /> }

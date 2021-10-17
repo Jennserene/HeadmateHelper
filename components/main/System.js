@@ -11,7 +11,7 @@ const System = (props) => {
 
   const context = useContext(Context)
 
-  const { renameAlter } = props
+  const { renameAlter, reproxyAlter } = props
 
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
@@ -43,7 +43,8 @@ const System = (props) => {
         { (systemView == 'alter') && <Alter 
                                       alter={alterFocus} 
                                       toggleSystemView={toggleSystemView} 
-                                      renameAlter={renameAlter} /> }
+                                      renameAlter={renameAlter} 
+                                      reproxyAlter={reproxyAlter} /> }
       </View>
       { (systemView == 'view' && context.allAlters) && 
         <ScrollView>

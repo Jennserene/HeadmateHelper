@@ -9,7 +9,7 @@ const Alter = (props) => {
 
   const context = useContext(Context)
 
-  const { alter, toggleSystemView, renameAlter } = props
+  const { alter, toggleSystemView, renameAlter, reproxyAlter } = props
 
   const [alterView, setAlterView] = useState('view')
 
@@ -29,7 +29,8 @@ const Alter = (props) => {
       { (alterView == 'edit' && alterData) && <EditAlter 
                                                   alterData={alterData} 
                                                   toggleAlterView={toggleAlterView} 
-                                                  renameAlter={renameAlter} /> }
+                                                  renameAlter={renameAlter} 
+                                                  reproxyAlter={reproxyAlter} /> }
     </View>
   );
 }

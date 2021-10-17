@@ -34,7 +34,7 @@ const App = () => {
   // Set State
   const [user, setUser] = useState(null)
   const [accountInit, setAccountInit] = useState(false)
-  const [front, setFront] = useState({name: 'Unknown', id: 'unknown'})
+  const [front, setFront] = useState({name: 'Unknown', id: 'unknown', proxy: ''})
   const [switchMenuOpen, setSwitchMenuOpen] = useState(false)
   const [mainMenuOpen, setMainMenuOpen] = useState(false)
   const [allAlters, setAllAlters] = useState(null)
@@ -189,6 +189,18 @@ const App = () => {
     }
   }
 
+  const reproxyAlter = (newProxy) => {
+    if (newProxy !== front.proxy) {
+      for (let i = 0; i < allAlters.length; i++) {
+        if (allAlters[i].id == front.id) {
+          allAlters[i].proxy = newProxy
+          setFront(allAlters[i])
+          return
+        }
+      }
+    }
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
@@ -221,7 +233,8 @@ const App = () => {
                                 addAlter={addAlter} 
                                 makeAlterFront={makeAlterFront}
                                 logOut={logOut} 
-                                renameAlter={renameAlter} /> }
+                                renameAlter={renameAlter} 
+                                reproxyAlter={reproxyAlter} /> }
           </View>
         </Context.Provider>
       }

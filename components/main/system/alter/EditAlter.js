@@ -7,7 +7,7 @@ const EditAlter = (props) => {
 
   const context = useContext(Context)
 
-  const { alterData, toggleAlterView, renameAlter } = props
+  const { alterData, toggleAlterView, renameAlter, reproxyAlter } = props
 
   const [alterObj, setAlterObj] = useState({...alterData})
   const [nameError, setNameError] = useState(null)
@@ -86,8 +86,11 @@ const EditAlter = (props) => {
     
     // Handle submit
     const dbalter = await context.db.collection('users').doc(context.user.uid).collection('alters').doc(alterData.id).update(alterObj)
-    if (alterObj.name !== context.frontName) {
+    if (alterObj.name !== context.front.name) {
       renameAlter(alterObj.name)
+    }
+    if (alterObj.proxy !== context.front.proxy) {
+      reproxyAlter(alterObj.proxy)
     }
     setNameError('')
     toggleAlterView('view')
