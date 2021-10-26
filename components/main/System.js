@@ -6,12 +6,13 @@ import ViewSystem from './system/ViewSystem'
 import EditSystem from './system/EditSystem'
 import AlterList from './system/AlterList'
 import Alter from './system/Alter'
+import Intro from './system/Intro'
 
 const System = (props) => {
 
   const context = useContext(Context)
 
-  const { renameAlter, reproxyAlter } = props
+  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro } = props
 
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
@@ -45,6 +46,10 @@ const System = (props) => {
                                       toggleSystemView={toggleSystemView} 
                                       renameAlter={renameAlter} 
                                       reproxyAlter={reproxyAlter} /> }
+        { (systemView == 'intro') && <Intro 
+                                        newAlterIntro={newAlterIntro} 
+                                        updateNewAlterIntro={updateNewAlterIntro} 
+                                        toggleSystemView={toggleSystemView} /> }
       </View>
       { (systemView == 'view' && context.allAlters) && 
         <ScrollView>
@@ -61,12 +66,12 @@ const styles = StyleSheet.create({
 
   },
   SystemView: {
-    borderStyle: 'solid',
-    borderBottomWidth: 1,
-    borderColor: 'black',
+    
   },
   AltersView: {
-    
+    borderStyle: 'solid',
+    borderTopWidth: 1,
+    borderColor: 'black',
   }
 })
 

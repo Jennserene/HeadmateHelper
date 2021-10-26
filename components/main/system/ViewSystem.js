@@ -8,10 +8,6 @@ const ViewSystem = (props) => {
 
   const { systemData, toggleSystemView } = props
 
-  const handleSystemEdit = () => {
-    toggleSystemView('edit')
-  }
-
   return (
     <View>
       <View style={styles.HeaderView}>
@@ -36,7 +32,14 @@ const ViewSystem = (props) => {
         </View>
       </View>
       <View style={styles.ButtonsView}>
-        <Pressable style={styles.ButtonsPressable} onPress={ () => {handleSystemEdit()}}>
+        <View>
+          { context.settings.introVisible ? 
+            <Pressable style={styles.IntroButtonPressable} onPress={ () => {toggleSystemView('intro')}}>
+              <Text>New Alter Intro</Text>
+            </Pressable> 
+          : null }
+        </View>
+        <Pressable style={styles.EditButtonPressable} onPress={ () => {toggleSystemView('edit')}}>
           <Text>Edit</Text>
         </Pressable>
       </View>
@@ -71,13 +74,20 @@ const styles = StyleSheet.create({
   },
   ButtonsView: {
     flexDirection: 'row',
-    justifyContent: 'flex-end',
+    justifyContent: 'space-between',
     padding: 10,
   },
-  ButtonsPressable: {
+  EditButtonPressable: {
     backgroundColor: 'aqua',
     height: 25,
     width: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  IntroButtonPressable: {
+    backgroundColor: 'aqua',
+    height: 25,
+    width: 100,
     alignItems: 'center',
     justifyContent: 'center',
   }

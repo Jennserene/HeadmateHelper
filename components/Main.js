@@ -30,7 +30,9 @@ const Main = (props) => {
           mainMenuOpen, 
           logOut, 
           renameAlter,
-          reproxyAlter } = props
+          reproxyAlter,
+          newAlterIntro, 
+          updateNewAlterIntro, } = props
 
   // set state on mount
   useEffect( () => {
@@ -122,10 +124,16 @@ const Main = (props) => {
         <View style={styles.MainView}>
           <View style={styles.ContentView}>
             { (nav == 'chat' && currentRoom) && <Chat currentRoom={currentRoom} /> }
-            { nav == 'system' && <System renameAlter={renameAlter} reproxyAlter={reproxyAlter} /> }
+            { nav == 'system' && <System 
+                                    renameAlter={renameAlter} 
+                                    reproxyAlter={reproxyAlter} 
+                                    newAlterIntro={newAlterIntro} 
+                                    updateNewAlterIntro={updateNewAlterIntro} /> }
             { nav == 'reminders' && <Reminders /> }
             { nav == 'diary' && <Diary /> }
-            { nav == 'settings' && <Settings /> }
+            { nav == 'settings' && <Settings 
+                                      newAlterIntro={newAlterIntro} 
+                                      updateNewAlterIntro={updateNewAlterIntro} /> }
             { nav == 'about' && <About /> }
             { nav == 'manageRooms' && <ManageRooms 
                                         allRooms={allRooms} 
@@ -138,7 +146,8 @@ const Main = (props) => {
                 style={styles.SwitchMenu} 
                 toggleSwitchMenu={toggleSwitchMenu}
                 addAlter={addAlter}
-                makeAlterFront={makeAlterFront} /> }
+                makeAlterFront={makeAlterFront}
+                newAlterIntro={newAlterIntro} /> }
           { mainMenuOpen && 
               <MainMenu 
                 style={styles.MainMenu} 

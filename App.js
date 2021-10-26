@@ -1,6 +1,6 @@
 // import react and react-native display components
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, StatusBar } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, StatusBar, KeyboardAvoidingView, Dimensions } from 'react-native';
 
 // import firebase
 import ApiKeys from './constants/ApiKeys'
@@ -39,6 +39,8 @@ const App = () => {
   const [mainMenuOpen, setMainMenuOpen] = useState(false)
   const [allAlters, setAllAlters] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [newAlterIntro, setNewAlterIntro] = useState('')
+  const [settings, setSettings] = useState({introVisible: true})
 
   // Check if user is already logged in and then set them to user.
   useEffect( () => {
@@ -60,6 +62,7 @@ const App = () => {
           const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
+              setNewAlterIntro(documentSnapshot.data().newAlterIntro)
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
             } else {
               setLoading(false)
@@ -201,43 +204,55 @@ const App = () => {
     }
   }
 
+  const updateNewAlterIntro = (text) => {
+    setNewAlterIntro(text)
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
-      { loading ? // if app is loading, display loading screen.
-        <LoadingScreen /> :
-        <Context.Provider value={{ // set global state
-          user: user,
-          db: db,
-          front: front,
-          allAlters: allAlters,
-        }}>
-          <View style={styles.header}>
-            {/* Header displays only if account is initialized */}
-            { accountInit && <Header 
-                                toggleSwitchMenu={toggleSwitchMenu} 
-                                toggleMainMenu={toggleMainMenu} /> }
-          </View>
-          <View style={styles.mainContent}>
-            {/* ROUTING HAPPENS HERE */}
-            {/* If your account has not finished initializing display the logIn component */}
-            { !accountInit && <LogIn
-                                accountInit={accountInit}  
-                                initializeAccount={initializeAccount} /> }
-            {/* If your account has finished initializing display the Main component */}
-            { accountInit && <Main 
-                                switchMenuOpen={switchMenuOpen} 
-                                mainMenuOpen={mainMenuOpen} 
-                                toggleSwitchMenu={toggleSwitchMenu} 
-                                toggleMainMenu={toggleMainMenu} 
-                                addAlter={addAlter} 
-                                makeAlterFront={makeAlterFront}
-                                logOut={logOut} 
-                                renameAlter={renameAlter} 
-                                reproxyAlter={reproxyAlter} /> }
-          </View>
-        </Context.Provider>
-      }
+      <KeyboardAvoidingView
+          behavior={'postion' || 'height' || 'padding'}
+          // behavior={Platform.OS === "ios" ? "padding" : "height"}
+          style={styles.KeyboardAvoidContainer}>
+        { loading ? // if app is loading, display loading screen.
+          <LoadingScreen /> :
+          <Context.Provider value={{ // set global state
+            user: user,
+            db: db,
+            front: front,
+            allAlters: allAlters,
+            settings: settings,
+          }}>
+            <View style={styles.header}>
+              {/* Header displays only if account is initialized */}
+              { accountInit && <Header 
+                                  toggleSwitchMenu={toggleSwitchMenu} 
+                                  toggleMainMenu={toggleMainMenu} /> }
+            </View>
+            <View style={styles.mainContent}>
+              {/* ROUTING HAPPENS HERE */}
+              {/* If your account has not finished initializing display the logIn component */}
+              { !accountInit && <LogIn
+                                  accountInit={accountInit}  
+                                  initializeAccount={initializeAccount} /> }
+              {/* If your account has finished initializing display the Main component */}
+              { accountInit && <Main 
+                                  switchMenuOpen={switchMenuOpen} 
+                                  mainMenuOpen={mainMenuOpen} 
+                                  toggleSwitchMenu={toggleSwitchMenu} 
+                                  toggleMainMenu={toggleMainMenu} 
+                                  addAlter={addAlter} 
+                                  makeAlterFront={makeAlterFront}
+                                  logOut={logOut} 
+                                  renameAlter={renameAlter} 
+                                  reproxyAlter={reproxyAlter} 
+                                  newAlterIntro={newAlterIntro} 
+                                  updateNewAlterIntro={updateNewAlterIntro} /> }
+            </View>
+          </Context.Provider>
+        }
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -254,6 +269,11 @@ const styles = StyleSheet.create({
     height: 75,
     width: "100%",
     backgroundColor: '#50359A',
+  },
+  KeyboardAvoidContainer: {
+    flex: 1,
+    width: '100%',
+    height: Platform.OS === 'android' ? Dimensions.get('window').height - StatusBar.currentHeight : '100%',
   },
   mainContent: {
     flexGrow: 1,
