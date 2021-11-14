@@ -32,7 +32,8 @@ const Main = (props) => {
           renameAlter,
           reproxyAlter,
           newAlterIntro, 
-          updateNewAlterIntro, } = props
+          updateNewAlterIntro,
+          updateSettings, } = props
 
   // set state on mount
   useEffect( () => {
@@ -131,9 +132,8 @@ const Main = (props) => {
                                     updateNewAlterIntro={updateNewAlterIntro} /> }
             { nav == 'reminders' && <Reminders /> }
             { nav == 'diary' && <Diary /> }
-            { nav == 'settings' && <Settings 
-                                      newAlterIntro={newAlterIntro} 
-                                      updateNewAlterIntro={updateNewAlterIntro} /> }
+            { nav == 'settings' && <Settings  
+                                      updateSettings={updateSettings} /> }
             { nav == 'about' && <About /> }
             { nav == 'manageRooms' && <ManageRooms 
                                         allRooms={allRooms} 

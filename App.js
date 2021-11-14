@@ -63,6 +63,16 @@ const App = () => {
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
               setNewAlterIntro(documentSnapshot.data().newAlterIntro) // Retrieve newAlterIntro
+                let tempSettings = documentSnapshot.data().settings
+                // set default values for settings
+                if (typeof tempSettings === 'object' && tempSettings !== null) { // check if settings object exists and if so handle defaults one by one
+                  if (!("introVisible" in tempSettings)) { // if key 'introVisible' does not exist then set it to false
+                    tempSettings.introVisible = false
+                  }
+                } else { // if settings object does not exist then set default settings
+                  tempSettings = {introVisible: false}
+                }
+                setSettings(tempSettings) // set settings
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
             } else {
               setLoading(false)
@@ -208,6 +218,10 @@ const App = () => {
     setNewAlterIntro(text)
   }
 
+  const updateSettings = (settingsObj) => {
+    setSettings(settingsObj)
+  }
+
   return (
     <SafeAreaView style={styles.root}>
       <ExpoStatusBar style="dark" />
@@ -248,7 +262,8 @@ const App = () => {
                                   renameAlter={renameAlter} 
                                   reproxyAlter={reproxyAlter} 
                                   newAlterIntro={newAlterIntro} 
-                                  updateNewAlterIntro={updateNewAlterIntro} /> }
+                                  updateNewAlterIntro={updateNewAlterIntro} 
+                                  updateSettings={updateSettings} /> }
             </View>
           </Context.Provider>
         }
