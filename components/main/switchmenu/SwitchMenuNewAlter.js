@@ -12,11 +12,11 @@ const SwitchMenuNewAlter = (props) => {
   const [nameError, setNameError] = useState('')
   const [proxy, setProxy] = useState('')
 
-  const { menuStateToggle, toggleSwitchMenu, addAlter, makeAlterFront } = props
+  const { menuStateToggle, toggleSwitchMenu, addAlter, makeAlterFront, newAlterIntro } = props
 
   // Switch to Switch menu
   const ToggleMenuState = () => {
-    menuStateToggle()
+    menuStateToggle('choose')
   }
 
   const HandleName = (text) => {
@@ -67,7 +67,11 @@ const SwitchMenuNewAlter = (props) => {
     setNameErrorExists(false)
     setNameError('')
     setProxy('')
-    SwitchToggle()
+    if ((newAlterIntro !== '') && (context.settings.introVisible === true)) {
+      menuStateToggle('NAIntro')
+    } else {
+      SwitchToggle()
+    }
   }
 
   return (

@@ -1,26 +1,23 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import SwitchMenuContents from './switchmenu/SwitchMenuContents'
+import SwitchMenuIntro from './switchmenu/SwitchMenuIntro';
 import SwitchMenuNewAlter from './switchmenu/SwitchMenuNewAlter'
 
 const SwitchMenu = (props) => {
 
   const [menuState, setMenuState] = useState('choose')
 
-  const { toggleSwitchMenu, makeAlterFront, addAlter } = props
+  const { toggleSwitchMenu, makeAlterFront, addAlter, newAlterIntro } = props
 
   // Close the switch menu
   const SwitchToggle = () => {
     toggleSwitchMenu()
   }
 
-  // Toggle between the Switch menu and the New Alter menu
-  const menuStateToggle = () => {
-    if (menuState == 'choose') {
-      setMenuState('new')
-    } else if (menuState == 'new') {
-      setMenuState('choose')
-    }
+  // Switch between menu screens
+  const menuStateToggle = (destination) => {
+      setMenuState(destination)
   }
 
   return (
@@ -34,7 +31,11 @@ const SwitchMenu = (props) => {
                                   menuStateToggle={menuStateToggle} 
                                   toggleSwitchMenu={toggleSwitchMenu}
                                   addAlter={addAlter}
-                                  makeAlterFront={makeAlterFront} /> }
+                                  makeAlterFront={makeAlterFront}
+                                  newAlterIntro={newAlterIntro} /> }
+        { menuState == 'NAIntro' && <SwitchMenuIntro
+                                      toggleSwitchMenu={toggleSwitchMenu} 
+                                      newAlterIntro={newAlterIntro} /> }
       </View>
       <Pressable 
           style={styles.ClickOutPressable} 

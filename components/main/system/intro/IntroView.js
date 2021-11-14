@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import Markdown from 'react-native-simple-markdown'
+import { MarkdownView } from 'react-native-markdown-view'
 
 const IntroView = (props) => {
 
@@ -8,9 +8,9 @@ const IntroView = (props) => {
 
   return (
     <View style={styles.ContainerView}>
-      <Markdown>
+      <MarkdownView>
         { introContents }
-      </Markdown>
+      </MarkdownView>
     </View>
   );
 };

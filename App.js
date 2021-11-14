@@ -62,7 +62,7 @@ const App = () => {
           const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
-              setNewAlterIntro(documentSnapshot.data().newAlterIntro)
+              setNewAlterIntro(documentSnapshot.data().newAlterIntro) // Retrieve newAlterIntro
               return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
             } else {
               setLoading(false)

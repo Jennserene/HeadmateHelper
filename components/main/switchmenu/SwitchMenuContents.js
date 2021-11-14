@@ -15,7 +15,7 @@ const SwitchMenuContents = (props) => {
 
   // Switch to New Alter menu
   const ToggleMenuState = () => {
-    menuStateToggle()
+    menuStateToggle('new')
   }
 
   // Close the menu
