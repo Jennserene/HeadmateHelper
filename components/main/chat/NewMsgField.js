@@ -17,7 +17,9 @@ const NewMsgField = (props) => {
 
   const CheckForProxies = () => {
     for (i = 0; i < context.allAlters.length; i++) {
-      if (context.allAlters[i].proxy === ('' || null || undefined)) {
+      if (context.allAlters[i].proxy === '' || 
+          context.allAlters[i].proxy === null || 
+          context.allAlters[i].proxy === undefined) {
         continue
       }
       if (msgText.startsWith(context.allAlters[i].proxy)) {
