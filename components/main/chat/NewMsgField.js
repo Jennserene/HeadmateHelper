@@ -46,7 +46,7 @@ const NewMsgField = (props) => {
         avatar: null,
         author: modAuthor,
         text: modMsgText,
-        createdAt: timeDate
+        createdAt: timeDate // on Firebase Upgrade pass this in without this line.
       }
       const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
       const dbNewChat = await dbRoomChats.add(newMsg)

@@ -38,7 +38,7 @@ const Main = (props) => {
   // set state on mount
   useEffect( () => {
     const getStateOnMount = async () => {
-      // get system name
+      // get system name // ON FIREBASE UPDATE GET THIS FROM APP.JS
       const getSystemName = async () => {
         const dbUser = await context.db.collection("users").doc(context.user.uid).get()
         const dbSystemName = await dbUser.get('systemName')

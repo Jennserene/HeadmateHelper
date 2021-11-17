@@ -17,6 +17,7 @@ const System = (props) => {
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
 
+  // CONVERT TO USE DATA FROM APP.JS ON FIREBASE UPGRADE
   const documentRef = context.db.collection("users").doc(context.user.uid)
   const [systemData] = useDocumentData(documentRef, { idField: 'id' })
 
