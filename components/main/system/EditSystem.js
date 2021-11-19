@@ -43,6 +43,7 @@ const EditSystem = (props) => {
   }
 
   const handleSubmit = async () => {
+    // Replace with updateSystem(systemObj) from ../../../Firebase.js
     const dbSystem = await context.db.collection('users').doc(context.user.uid).update(systemObj)
     toggleSystemView('view')
   }

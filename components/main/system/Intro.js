@@ -29,6 +29,7 @@ const Intro = (props) => {
   }
 
   const saveContents = async () => {
+    // Replace with updateNewAlterIntro(introContents) from ../../../Firebase.js
     const dbintro = await context.db.collection('users').doc(context.user.uid).update({
       newAlterIntro: introContents
     })

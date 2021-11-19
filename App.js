@@ -59,6 +59,7 @@ const App = () => {
       if (user) {
         setLoading(true)
         try {
+          // Replace with getSystemData() from ./Firebase.js
           const dbUser = await db.collection("users").doc(user.uid)
           const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
@@ -83,6 +84,7 @@ const App = () => {
             setAccountInit(true) // If user account initialized, setAccountInit to true, otherwise set to false
             // Get list of all alters
             try {
+              // Replace with getAllAlters() from ./Firebase.js
               const querySnapshot = await dbUser.collection('alters').orderBy('lastFront', 'desc').get() // Get query of all alters
               let alterNames = [] // Holder of alters, contains many
               querySnapshot.forEach((doc) => {
@@ -165,6 +167,7 @@ const App = () => {
     //   alterNames.push(doc.get('name')) // add names of alters named alterName to array alterNames
     // })
     try {
+      // Replace with updateAlterFront() from ./Firebase.js
       const dbUser = await db.collection("users").doc(user.uid).collection("alters").doc(alterID).update({
         lastFront: firebase.firestore.FieldValue.serverTimestamp()
       })

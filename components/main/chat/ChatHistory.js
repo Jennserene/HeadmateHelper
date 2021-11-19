@@ -36,6 +36,7 @@ const ChatHistory = (props) => {
     const addNewMsg = async () => {
       if (newMsg) {
         try {
+          // Replace with getNewMsg(roomID, newMsg) from ../../../Firebase.js
           const dbMsg = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats').doc(newMsg)
           const newData = await dbMsg.get().then(documentSnapshot => { // get document, THEN take snapshot of document
             if (documentSnapshot.exists) { // does document exist?
@@ -64,7 +65,7 @@ const ChatHistory = (props) => {
       try {
         // Set State: Loading
         setLoading(true)
-        // console.log('Retrieving Data');
+        // Replace with getInitChatQuery(roomID, limitNum) from ../../../Firebase.js
         // Cloud Firestore: Query
         const queryPath = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
         let initialQuery = await queryPath
@@ -82,6 +83,7 @@ const ChatHistory = (props) => {
         });
         // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
         if (newDocumentData.length > 0) {
+          // Replace with getLastChatSnapShot(roomID, lastDocID) from ../../../Firebase.js
           const docSnap = await queryPath.doc(newDocumentData[0].id).get()
           // Set State
           setDocumentData(newDocumentData)
@@ -103,7 +105,7 @@ const ChatHistory = (props) => {
       // Set State: Refreshing
       setRefreshing(true)
 
-      // console.log('Retrieving additional Data');
+      // Replace with getMoreChatQuery(roomID, limitNum, lastSnapShot) from ../../../Firebase.js
       // Cloud Firestore: Query (Additional Query)
       const queryPath = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
       let additionalQuery = await queryPath
@@ -123,6 +125,7 @@ const ChatHistory = (props) => {
       let newDocumentData = newDocumentDataReversed.reverse()
       // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
       if (newDocumentData.length > 0) {
+        // Replace with getLastChatSnapShot(roomID, lastDocID) from ../../../Firebase.js
         const docSnap = await queryPath.doc(newDocumentData[0].id).get()
         // Set State
         setDocumentData([...newDocumentData, ...documentData])

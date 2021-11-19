@@ -20,6 +20,7 @@ const CreateSystem = (props) => {
       return
     }
     try {
+      // Replace with putInitSystemData(systemName) from ../../Firebase.js
       context.db.collection('users').doc(context.user.uid).set({ // Create doc with user's UID with two fields in it
         systemName: systemName,
         accountInit: true

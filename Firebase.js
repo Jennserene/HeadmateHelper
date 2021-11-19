@@ -11,7 +11,13 @@ import {
           onSnapshot,
           deleteDoc,
         } from "firebase/firestore"
-import { getAuth, onAuthStateChanged } from "firebase/auth"
+import { 
+          getAuth, 
+          onAuthStateChanged, 
+          signInWithEmailAndPassword, 
+          createUserWithEmailAndPassword, 
+          signOut 
+        } from "firebase/auth"
 
 const db = getFirestore()
 
@@ -24,21 +30,29 @@ onAuthStateChanged(auth, (user => {
   }
 }))
 
-// used in ./App.js on mount
+// used in ./App.js on user state change
 export const getSystemData = async () => {
-  const docRef = doc(db, "users", userUID)
-  const docSnap = await getDoc(docRef)
-
-  if (docSnap.exists()) {
-    // docSnap.data() contains: newAlterIntro, settings, accountInit, and systemName
-    return {id: userUID, ...docSnap.data()}
-  } else {
-    console.log('ERROR in getSystemData: Account data does not exist!')
+  try {
+    const sysRef = doc(db, "users", userUID)
+    const docSnap = await getDoc(sysRef)
+    if (docSnap.exists()) {
+      // docSnap.data() contains: newAlterIntro, settings, accountInit, and systemName and more
+      const sysData = docSnap.data()
+      const sysObj = {
+        id: userUID,
+        ...sysData,
+      }
+      return sysObj
+    } else {
+      console.log('ERROR in getSystemData: Account data does not exist!')
+    }
+  } catch (err) {
+    console.log('ERROR in getSystemData:', err)
   }
 }
 
-// used in ./App.js on mount
-export const getAllAlters = async () => {
+// used in ./App.js on user state change
+export const getAllAlters = async () => { // Can this contain ALL alter data? Perhaps convert alterList to an object... Would that maintain order by lastFront?
   try {
     const altersRef = collection(db, `users/${userUID}/alters`)
     const q = query(altersRef, orderBy('lastFront', 'desc'))
@@ -116,11 +130,41 @@ export const putInitSystemData = async (systemName) => {
   }
 }
 
+// used in ./components/LogIn/SignIn.js
+export const firebaseLogIn = async (email, password) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    return user
+  } catch (err) {
+    const errorObj = {
+      code: err.code,
+      msg: err.message,
+    }
+    return errorObj
+  }
+}
+
+// used in ./components/LogIn/SignUp.js
+export const firebaseSignUp = async (email, password) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password)
+    const user = userCredential.user
+    return user
+  } catch (err) {
+    const errorObj = {
+      code: err.code,
+      msg: err.message,
+    }
+    return errorObj
+  }
+}
+
 // used in ./components/main/Settings.js in handleSave()
 export const updateSettings = async (settingsData) => {
   try {
-    const settingsRef = doc(db, 'users', userUID)
-    await updateDoc(settingsRef, {
+    const userRef = doc(db, 'users', userUID)
+    await updateDoc(userRef, {
       settings: settingsData
     })
   } catch (err) {
@@ -194,7 +238,7 @@ export const getLastChatSnapShot = async (roomID, lastDocID) => {
       console.log('ERROR in getLastChatSnapShot: docSnap does not exist!')
     }
   } catch (err) {
-    console.log('ERROR in getLastChatSnapShot:', err)
+    console.log('ERROR in getLastChatSnapShot: ', err)
   }
 }
 
@@ -209,7 +253,16 @@ export const putNewMsg = async (roomID, newMsgRaw) => {
     const docRef = await addDoc(chatsRef, newMsg)
     return docRef.id
   } catch (err) {
-    console.log('ERROR in putNewMsg:', err)
+    console.log('ERROR in putNewMsg: ', err)
+  }
+}
+
+// used in ./components/main/mainmenu/MainMenuLeft.js
+export const firebaseLogOut = async () => {
+  try {
+    signOut(auth)
+  } catch (err) {
+    console.log('ERROR in firebaseLogOut: ', err)
   }
 }
 
@@ -221,8 +274,8 @@ export const putNewRoom = async (newRoomName) => {
       createdAt: serverTimestamp()
     }
     const roomsRef = collection(db, `users/${userUID}/rooms`)
-    const docRef = await addDoc(roomsRef, newRoom)
-    return docRef.id
+    const docSnap = await addDoc(roomsRef, newRoom)
+    return docSnap.id
   } catch (err) {
     console.log('ERROR in putNewRoom:', err)
   }
@@ -265,7 +318,7 @@ export const putNewAlter = async (name, proxy) => {
   }
 }
 
-// used in ./components/main/system/Alter.js on mount
+// used in ./components/main/system/Alter.js on mount // Can this just be gotten from allAlters in app.js?
 export const getAlter = async (alterID) => {
   try {
     const alterRef = doc(db, `users/${userUID}/alters`, alterID)

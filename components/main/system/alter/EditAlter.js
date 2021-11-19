@@ -85,6 +85,7 @@ const EditAlter = (props) => {
     }
     
     // Handle submit
+    // Replace with updateAlter(alterID, alterObj) from ../../../../Firebase.js
     const dbalter = await context.db.collection('users').doc(context.user.uid).collection('alters').doc(alterData.id).update(alterObj)
     if (alterObj.name !== context.front.name) {
       renameAlter(alterObj.name)

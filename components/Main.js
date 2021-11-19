@@ -45,7 +45,8 @@ const Main = (props) => {
         setSystemName(dbSystemName)
       }
       // Get all the rooms
-      const getAllRooms = async () => {
+      const getAllRooms = async () => { // Rename this function (or place in parent function) or it will override firebase function
+        // Replace with getAllRooms() from ../Firebase.js
         const dbRooms = await context.db.collection("users").doc(context.user.uid).collection('rooms')
         const dbOrderedRooms = await dbRooms.orderBy('createdAt')
         const dbRoomsList = await dbOrderedRooms.get()

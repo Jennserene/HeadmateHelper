@@ -23,6 +23,7 @@ const SignIn = (props) => {
   const handleSubmit = async () => {
     // VALIDATION HERE
     try {
+      // replace with firebaseLogIn(email, password) from ../../Firebase.js
       const userCredential = await firebase.auth().signInWithEmailAndPassword(emailText, passwordText)
       const user = userCredential.user
       setErrorCode('')

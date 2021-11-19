@@ -33,6 +33,7 @@ const SignUp = (props) => {
       return
     }
     try {
+      // replace with firebaseSignUp(email, password) from ../../Firebase.js
       const userCredential = await firebase.auth().createUserWithEmailAndPassword(emailText, passwordText)
       const user = userCredential.user
       setRepeatError('')

@@ -48,6 +48,7 @@ const NewMsgField = (props) => {
         text: modMsgText,
         createdAt: timeDate // on Firebase Upgrade pass this in without this line.
       }
+      // Replace with putNewMsg(roomID, newMsgRaw) from ../../../Firebase.js
       const dbRoomChats = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
       const dbNewChat = await dbRoomChats.add(newMsg)
       updateNewMsg(dbNewChat.id)

@@ -16,6 +16,7 @@ const Settings = (props) => {
       introVisible: introVisible,
     }
     try {
+      // Replace with updateSettings(settingsData) from ../../Firebase.js
       context.db.collection('users').doc(context.user.uid).update({ // Update the settings field with new settings object
         settings: tempSettings
       })

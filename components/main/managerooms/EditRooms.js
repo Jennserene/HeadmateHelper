@@ -48,6 +48,7 @@ const EditRooms = (props) => {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }
     try {
+      // Replace with putNewRoom(newRoomName) from ../../../Firebase.js
       const newRoomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').add(newRoom)
       handleRoomAdd(newRoomName, newRoomDB.id)
       setError('')

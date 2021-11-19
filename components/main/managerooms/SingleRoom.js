@@ -28,6 +28,7 @@ const SingleRoom = (props) => {
       return
     }
     try {
+      // Replace with deleteRoom(RoomID) from ../../../Firebase.js
       const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).get()
       roomDB.ref.delete()
       setError('')
@@ -48,6 +49,7 @@ const SingleRoom = (props) => {
       return
     }
     try {
+      // Replace with updateRoomName(roomID, roomName) from ../../../Firebase.js
       const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).update({roomName: roomName})
       handleRoomUpdate(room.id, roomName)// Update allRooms by changing this room name
       toggleEdit()

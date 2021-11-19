@@ -13,6 +13,7 @@ const Alter = (props) => {
 
   const [alterView, setAlterView] = useState('view')
 
+  // Replace with getAlter(alterID) from ../../../Firebase.js
   const documentRef = context.db.collection("users").doc(context.user.uid).collection("alters").doc(alter.id)
   const [alterData] = useDocumentData(documentRef, { idField: 'id' })
 
