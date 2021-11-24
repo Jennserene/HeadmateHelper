@@ -1,15 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import Context from '../../../Context'
+import { updateSystem } from '../../../Firebase';
 import SystemField from './SystemField'
 
 const EditSystem = (props) => {
 
   const context = useContext(Context)
 
-  const { systemData, toggleSystemView } = props
+  const { toggleSystemView, updateLocalSystem } = props
 
-  const [systemObj, setSystemObj] = useState({...systemData})
+  const [systemObj, setSystemObj] = useState({...context.system})
 
   const fields = [ // All the editable fields in System Profile
     // field[0] = label, field[1] = fieldName, field[2] = multiline
@@ -43,8 +44,8 @@ const EditSystem = (props) => {
   }
 
   const handleSubmit = async () => {
-    // Replace with updateSystem(systemObj) from ../../../Firebase.js
-    const dbSystem = await context.db.collection('users').doc(context.user.uid).update(systemObj)
+    await updateSystem(systemObj)
+    updateLocalSystem(systemObj)
     toggleSystemView('view')
   }
 

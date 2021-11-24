@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
-// import { getAuth, signInWithEmailAndPassword } from "firebase/auth"
-import * as firebase from 'firebase'
+import { firebaseLogIn } from '../../Firebase';
 
 const SignIn = (props) => {
 
@@ -22,15 +21,13 @@ const SignIn = (props) => {
 
   const handleSubmit = async () => {
     // VALIDATION HERE
-    try {
-      // replace with firebaseLogIn(email, password) from ../../Firebase.js
-      const userCredential = await firebase.auth().signInWithEmailAndPassword(emailText, passwordText)
-      const user = userCredential.user
+    const user = firebaseLogIn(emailText, passwordText)
+    if (user.uid) {
       setErrorCode('')
       setErrorMessage('')
-    } catch (err) {
-      setErrorCode(err.code)
-      setErrorMessage(err.message)
+    } else {
+      setErrorCode(user.code)
+      setErrorMessage(user.message)
     }
   }
 

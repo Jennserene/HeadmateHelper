@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
-// import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
-import * as firebase from 'firebase'
+import { firebaseSignUp } from '../../Firebase'
 
 const SignUp = (props) => {
 
@@ -32,16 +31,13 @@ const SignUp = (props) => {
       setRepeatError('Password and Repeat Password must be identical')
       return
     }
-    try {
-      // replace with firebaseSignUp(email, password) from ../../Firebase.js
-      const userCredential = await firebase.auth().createUserWithEmailAndPassword(emailText, passwordText)
-      const user = userCredential.user
-      setRepeatError('')
+    const user = firebaseSignUp(emailText, passwordText)
+    if (user.uid) {
       setErrorCode('')
       setErrorMessage('')
-    } catch (err) {
-      setErrorCode(err.code)
-      setErrorMessage(err.message)
+    } else {
+      setErrorCode(user.code)
+      setErrorMessage(user.message)
     }
   }
 

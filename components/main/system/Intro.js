@@ -2,6 +2,7 @@
 import React, { useState, useContext } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Context from '../../../Context'
+import { updateFBNewAlterIntro } from '../../../Firebase'
 
 // Components
 import IntroNavBar from './intro/IntroNavBar'
@@ -29,10 +30,7 @@ const Intro = (props) => {
   }
 
   const saveContents = async () => {
-    // Replace with updateNewAlterIntro(introContents) from ../../../Firebase.js
-    const dbintro = await context.db.collection('users').doc(context.user.uid).update({
-      newAlterIntro: introContents
-    })
+    await updateFBNewAlterIntro(introContents)
     setIntroStatus('Saved!')
     updateNewAlterIntro(introContents)
     return

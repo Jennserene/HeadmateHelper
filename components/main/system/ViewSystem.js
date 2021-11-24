@@ -6,7 +6,9 @@ const ViewSystem = (props) => {
 
   const context = useContext(Context)
 
-  const { systemData, toggleSystemView } = props
+  const { toggleSystemView } = props
+
+  const [systemData, setSystemData] = useState(context.system)
 
   return (
     <View>

@@ -1,10 +1,10 @@
 // import react and react-native display components
 import React, { useState, useEffect } from 'react';
-import { SafeAreaView, StyleSheet, Text, View, StatusBar, KeyboardAvoidingView, Dimensions } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View, StatusBar, KeyboardAvoidingView, Dimensions, LogBox } from 'react-native';
 
 // import firebase
-import ApiKeys from './constants/ApiKeys'
-import * as firebase from 'firebase'
+import { getSystemData, getAllAlters, updateAlterFront, firebaseLogOut } from './Firebase.js'
+import { getAuth, onAuthStateChanged } from "firebase/auth"
 
 
 // import Expo
@@ -21,15 +21,14 @@ import Main from './components/Main'
 import LoadingScreen from './components/LoadingScreen'
 
 
-// Initialize Firebase
-!firebase.apps.length && firebase.initializeApp(ApiKeys.FirebaseConfig);
+
 
 WebBrowser.maybeCompleteAuthSession()
 
 const App = () => {
 
-  // create Database for queries in child components
-  const db = firebase.firestore()
+  // WARNING SUPPRESSED! THIS SHOULD BE REMOVED AND THE WARNING FIXED
+  LogBox.ignoreLogs(['Warning: Async Storage has been extracted from react-native core'])
 
   // Set State
   const [user, setUser] = useState(null)
@@ -41,16 +40,18 @@ const App = () => {
   const [loading, setLoading] = useState(false)
   const [newAlterIntro, setNewAlterIntro] = useState('')
   const [settings, setSettings] = useState({introVisible: true})
+  const [system, setSystem] = useState(null)
 
-  // Check if user is already logged in and then set them to user.
+  // // Check if user is already logged in and then set them to user
   useEffect( () => {
-    try {
-      firebase.auth().onAuthStateChanged( async (currUser) => {
-        currUser ? setUser(currUser) : setUser(null) // is the user logged in? If so setUser to user
-      })
-    } catch (error) {
-      console.error(error)
-    }
+    const auth = getAuth()
+    onAuthStateChanged(auth, (user => {
+      if (user) {
+        setUser(user.uid) // Get user's UID
+      } else {
+        setUser(null)
+      }
+    }))
   }, [])
 
   // Check if user account is logged in and set up state
@@ -59,57 +60,39 @@ const App = () => {
       if (user) {
         setLoading(true)
         try {
-          // Replace with getSystemData() from ./Firebase.js
-          const dbUser = await db.collection("users").doc(user.uid)
-          const init = await dbUser.get().then(documentSnapshot => { // get document, THEN take snapshot of document
-            if (documentSnapshot.exists) { // does document exist?
-              setNewAlterIntro(documentSnapshot.data().newAlterIntro) // Retrieve newAlterIntro
-                let tempSettings = documentSnapshot.data().settings
-                // set default values for settings
-                if (typeof tempSettings === 'object' && tempSettings !== null) { // check if settings object exists and if so handle defaults one by one
-                  if (!("introVisible" in tempSettings)) { // if key 'introVisible' does not exist then set it to false
-                    tempSettings.introVisible = false
-                  }
-                } else { // if settings object does not exist then set default settings
-                  tempSettings = {introVisible: false}
-                }
-                setSettings(tempSettings) // set settings
-              return documentSnapshot.data().accountInit.toString() // if exists return value for accountInit
-            } else {
-              setLoading(false)
-              return false
+          const sysObj = await getSystemData()
+          setSystem(sysObj)
+          setNewAlterIntro(sysObj.newAlterIntro)
+          // check if settings object exists and if so handle defaults one by one
+          let tempSettings = {}
+          if ('settings' in sysObj) {
+            tempSettings = sysObj.settings
+            // SETTINGS DEFAULTS IF SETTINGS EXISTS
+            // Enables adding new settings in the future without having to manually change settings on back end
+            if (!("introVisible" in tempSettings)) { // if key 'introVisible' does not exist then set it to false
+              tempSettings.introVisible = false
             }
-          })
-          if (init === 'true') {
-            setAccountInit(true) // If user account initialized, setAccountInit to true, otherwise set to false
-            // Get list of all alters
-            try {
-              // Replace with getAllAlters() from ./Firebase.js
-              const querySnapshot = await dbUser.collection('alters').orderBy('lastFront', 'desc').get() // Get query of all alters
-              let alterNames = [] // Holder of alters, contains many
-              querySnapshot.forEach((doc) => {
-                alterNames.push({ // Add alter info to array alterNames
-                  name: doc.get('name'), 
-                  id: doc.id, 
-                  lastFront: doc.get('lastFront'),
-                  proxy: doc.get('proxy'),
-                }) 
-              })
-              setAllAlters(alterNames)
-            } catch (err) {
-              console.error(err)
+          } else { // If settings object does not exist, add default settings all at once.
+            tempSettings = {
+              introVisible: false,
             }
-            // Bring up switch menu right away
-            setMainMenuOpen(false)
-            setSwitchMenuOpen(true)
-            setLoading(false)
           }
+          setSettings(tempSettings)
+          if (sysObj.accountInit) {
+            setAccountInit(true)
+            const alterList = await getAllAlters()
+            setAllAlters(alterList)
+          }
+
+          // Bring up switch menu right away
+          setMainMenuOpen(false)
+          setSwitchMenuOpen(true)
+          setLoading(false)
         } catch (error) {
           console.error(error)
           setLoading(false)
         }
       }
-      
     }
     checkIfLoggedIn()
   }, [user]) // update on user being changed
@@ -131,7 +114,7 @@ const App = () => {
 
   // Log out of the account
   const logOut = () => {
-    firebase.auth().signOut()
+    firebaseLogOut()
     setMainMenuOpen(false)
     setAccountInit(false)
     setUser(null)
@@ -157,39 +140,17 @@ const App = () => {
   }
 
   // Set alter as front
-  const makeAlterFront = async (alterID) => {
-    // const dbUser = await db.collection("users").doc(user.uid)
-    // const querySnapshot = await dbUser.collection('alters').where('name', '==', alterName).get() // Get query of alters named alterName
-    // let alterIDs = [] // Holder of IDs, should only contain 1 but can contain more just in case
-    // let alterNames = [] // Holder of names, should only contain 1 but can contain more just in case
-    // querySnapshot.forEach((doc) => {
-    //   alterIDs.push(doc.id) // add ids of alters named alterName to array alterIDs
-    //   alterNames.push(doc.get('name')) // add names of alters named alterName to array alterNames
-    // })
-    try {
-      // Replace with updateAlterFront() from ./Firebase.js
-      const dbUser = await db.collection("users").doc(user.uid).collection("alters").doc(alterID).update({
-        lastFront: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      const frontAlter = allAlters.find(alter => alter.id === alterID)
-      setFront(frontAlter)
-      let alters = allAlters
-      const index = alters.indexOf(frontAlter)
-      if (index > -1) {
-        alters.splice(index, 1)
-        alters.unshift(frontAlter)
-        setAllAlters(alters)
-      }
-    } catch (err) {
-      console.error(err)
+  const makeAlterFront = (alterID) => {
+    updateAlterFront(alterID) // Update who is front on firebase backend
+    const frontAlter = allAlters.find(alter => alter.id === alterID)
+    setFront(frontAlter)
+    let alters = allAlters
+    const index = alters.indexOf(frontAlter)
+    if (index > -1) {
+      alters.splice(index, 1)
+      alters.unshift(frontAlter)
+      setAllAlters(alters)
     }
-    // if (alterIDs.length == 1) {
-      
-    //   setFrontID(alterIDs[0]) // set front ID to alterName's ID
-    //   setFrontName(alterNames[0]) // set front name to alterName's name
-    // } else {
-    //   console.error(`THERE ARE ${alterIDs.length} ALTERS NAMED ${alterName}`)
-    // }
   }
 
   // Rename an alter
@@ -221,8 +182,12 @@ const App = () => {
     setNewAlterIntro(text)
   }
 
-  const updateSettings = (settingsObj) => {
+  const updateLocalSettings = (settingsObj) => {
     setSettings(settingsObj)
+  }
+
+  const updateLocalSystem = (systemObj) => {
+    setSystem(systemObj)
   }
 
   return (
@@ -236,7 +201,7 @@ const App = () => {
           <LoadingScreen /> :
           <Context.Provider value={{ // set global state
             user: user,
-            db: db,
+            system: system,
             front: front,
             allAlters: allAlters,
             settings: settings,
@@ -250,8 +215,7 @@ const App = () => {
             <View style={styles.mainContent}>
               {/* ROUTING HAPPENS HERE */}
               {/* If your account has not finished initializing display the logIn component */}
-              { !accountInit && <LogIn
-                                  accountInit={accountInit}  
+              { !accountInit && <LogIn 
                                   initializeAccount={initializeAccount} /> }
               {/* If your account has finished initializing display the Main component */}
               { accountInit && <Main 
@@ -266,7 +230,8 @@ const App = () => {
                                   reproxyAlter={reproxyAlter} 
                                   newAlterIntro={newAlterIntro} 
                                   updateNewAlterIntro={updateNewAlterIntro} 
-                                  updateSettings={updateSettings} /> }
+                                  updateLocalSettings={updateLocalSettings}
+                                  updateLocalSystem={updateLocalSystem} /> }
             </View>
           </Context.Provider>
         }

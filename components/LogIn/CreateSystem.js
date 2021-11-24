@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import Context from '../../Context'
-import * as firebase from 'firebase'
+import { putInitSystemData } from '../../Firebase'
 
 const CreateSystem = (props) => {
 
@@ -19,26 +19,9 @@ const CreateSystem = (props) => {
       setError('Your system name can not be blank.')
       return
     }
-    try {
-      // Replace with putInitSystemData(systemName) from ../../Firebase.js
-      context.db.collection('users').doc(context.user.uid).set({ // Create doc with user's UID with two fields in it
-        systemName: systemName,
-        accountInit: true
-      }, {merge: true})
-      const dbUser = context.db.collection('users').doc(context.user.uid)
-      const initFront = await dbUser.collection('alters').doc('unknown').set({ // create 'alters' collection inside user doc
-        name: 'Unknown',
-        lastFront: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      const room = await dbUser.collection('rooms').add({ // create 'rooms' collection inside user doc
-        roomName: 'Main',
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      setError(null)
-      props.initializeAccount() // set accountInit to true
-    } catch (err) {
-      console.error(err)
-    }
+    await putInitSystemData(systemName)
+    setError(null)
+    props.initializeAccount() // set accountInit to true
   }
 
   return (

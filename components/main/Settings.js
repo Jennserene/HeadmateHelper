@@ -1,6 +1,7 @@
 import React, {useState, useContext} from 'react';
 import { ScrollView, View, Text, StyleSheet, Pressable } from 'react-native'
 import Context from '../../Context'
+import { updateSettings } from '../../Firebase'
 
 const Settings = (props) => {
   
@@ -9,23 +10,15 @@ const Settings = (props) => {
   const [introVisible, setIntroVisible] = useState(context.settings.introVisible)
   const [saved, setSaved] = useState(true)
 
-  const { updateSettings } = props
+  const { updateLocalSettings } = props
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const tempSettings = {
       introVisible: introVisible,
     }
-    try {
-      // Replace with updateSettings(settingsData) from ../../Firebase.js
-      context.db.collection('users').doc(context.user.uid).update({ // Update the settings field with new settings object
-        settings: tempSettings
-      })
-      updateSettings(tempSettings)
-      setSaved(true)
-    }
-    catch (err) {
-      console.log(err)
-    }
+    await updateSettings(tempSettings)
+    updateLocalSettings(tempSettings)
+    setSaved(true)
   }
 
   return (

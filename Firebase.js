@@ -1,7 +1,13 @@
+import ApiKeys from './constants/ApiKeys'
+import { initializeApp } from 'firebase/app' // THEN:
+// Initialize Firebase
+initializeApp(ApiKeys.FirebaseConfig);
+
 import { 
           getFirestore, 
           doc, 
           getDoc, 
+          addDoc, 
           collection, 
           getDocs, 
           query, 
@@ -10,6 +16,8 @@ import {
           setDoc,
           onSnapshot,
           deleteDoc,
+          orderBy,
+          limit,
         } from "firebase/firestore"
 import { 
           getAuth, 
@@ -82,6 +90,15 @@ export const updateAlterFront = async (alterID) => {
     })
   } catch (err) {
     console.log('ERROR in updateAlterFront:', err)
+  }
+}
+
+// used in ./App.js in logOut()
+export const firebaseLogOut = async () => {
+  try {
+    signOut(auth)
+  } catch (err) {
+    console.log('ERROR in firebaseLogOut: ', err)
   }
 }
 
@@ -197,7 +214,7 @@ export const getInitChatQuery = async (roomID, limitNum) => {
     querySnapshot.forEach((doc) => {
       docData = doc.data()
       newChatData.push({
-        id = doc.id,
+        id: doc.id,
         ...docData,
       })
     })
@@ -213,14 +230,15 @@ export const getMoreChatQuery = async (roomID, limitNum, lastSnapShot) => {
     const chatsRef = collection(db, `users/${userUID}/rooms/${roomID}/chats`)
     const q = query(chatsRef, orderBy('createdAt', 'desc'), limit(limitNum), startAfter(lastSnapShot))
     const querySnapshot = await getDocs(q)
-    let newChatData = []
+    let newChatDataBackwards = []
     querySnapshot.forEach((doc) => {
       docData = doc.data()
-      newChatData.push({
-        id = doc.id,
+      newChatDataBackwards.push({
+        id: doc.id,
         ...docData,
       })
     })
+    const newChatData = newChatDataBackwards.reverse()
     return newChatData // Can get ID of last visible document by accessing newChatData[0].id
   } catch (err) {
     console.log('ERROR in getMoreChatQuery:', err)
@@ -254,15 +272,6 @@ export const putNewMsg = async (roomID, newMsgRaw) => {
     return docRef.id
   } catch (err) {
     console.log('ERROR in putNewMsg: ', err)
-  }
-}
-
-// used in ./components/main/mainmenu/MainMenuLeft.js
-export const firebaseLogOut = async () => {
-  try {
-    signOut(auth)
-  } catch (err) {
-    console.log('ERROR in firebaseLogOut: ', err)
   }
 }
 
@@ -349,14 +358,14 @@ export const updateSystem = async (systemObj) => {
 }
 
 // used in ./components/main/system/Intro.js in saveContents()
-export const updateNewAlterIntro = async (introContents) => {
+export const updateFBNewAlterIntro = async (introContents) => {
   try {
     const sysRef = doc(db, 'users', userUID)
     await updateDoc(sysRef, {
       newAlterIntro: introContents
     })
   } catch (err) {
-    console.log('ERROR in updateNewAlterIntro:', err)
+    console.log('ERROR in updateFBNewAlterIntro:', err)
   }
 }
 

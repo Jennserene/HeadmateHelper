@@ -1,7 +1,7 @@
 import React, {useState, useContext} from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
-import * as firebase from 'firebase'
 import Context from '../../../Context'
+import { putNewAlter } from '../../../Firebase';
 
 const SwitchMenuNewAlter = (props) => {
   
@@ -43,25 +43,13 @@ const SwitchMenuNewAlter = (props) => {
       setNameError('There is already an alter by that name!')
       return
     }
-    let dbNewAlter = null
-    try {
-      const dbAlters = await context.db.collection('users').doc(context.user.uid).collection('alters')
-      dbNewAlter = await dbAlters.add({
-        name: name,
-        proxy: proxy,
-        createdAt: firebase.firestore.FieldValue.serverTimestamp()
-      })
-      addAlter({ // Add alter to allAlters
-        name: name,
-        id: dbNewAlter.id,
-        proxy: proxy,
-      })
-      await makeAlterFront(dbNewAlter.id) // Make this new alter be front
-    } catch (err) {
-      console.error(err)
-      return
-    }
-
+    const newAlterID = await putNewAlter(name, proxy) 
+    addAlter({ // Add alter to allAlters
+      name: name,
+      id: newAlterID,
+      proxy: proxy,
+    })
+    await makeAlterFront(newAlterID) // Make this new alter be front
     // Reset input field
     setName('')
     setNameErrorExists(false)

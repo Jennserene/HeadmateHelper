@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Context from '../Context'
+import { getAllRooms } from '../Firebase.js'
+
+// Import components
 import Chat from './main/Chat'
 import SwitchMenu from './main/SwitchMenu'
 import MainMenu from './main/MainMenu'
@@ -16,7 +19,6 @@ const Main = (props) => {
 
   const context = useContext(Context)
 
-  const [systemName, setSystemName] = useState(null)
   const [nav, setNav] = useState("chat")
   const [allRooms, setAllRooms] = useState(null)
   const [currentRoom, setCurrentRoom] = useState(null)
@@ -33,35 +35,16 @@ const Main = (props) => {
           reproxyAlter,
           newAlterIntro, 
           updateNewAlterIntro,
-          updateSettings, } = props
+          updateLocalSettings,
+          updateLocalSystem, } = props
 
   // set state on mount
   useEffect( () => {
     const getStateOnMount = async () => {
-      // get system name // ON FIREBASE UPDATE GET THIS FROM APP.JS
-      const getSystemName = async () => {
-        const dbUser = await context.db.collection("users").doc(context.user.uid).get()
-        const dbSystemName = await dbUser.get('systemName')
-        setSystemName(dbSystemName)
-      }
       // Get all the rooms
-      const getAllRooms = async () => { // Rename this function (or place in parent function) or it will override firebase function
-        // Replace with getAllRooms() from ../Firebase.js
-        const dbRooms = await context.db.collection("users").doc(context.user.uid).collection('rooms')
-        const dbOrderedRooms = await dbRooms.orderBy('createdAt')
-        const dbRoomsList = await dbOrderedRooms.get()
-        let roomNames = [] // Holder of names, contains many [name, id] arrays
-        dbRoomsList.forEach((doc) => {
-          let roomObj = {}
-          roomObj.name = doc.get('roomName') // Add names of rooms to array roomNames
-          roomObj.id = doc.id // Add ids too
-          roomNames.push(roomObj)
-        })
-        setAllRooms(roomNames)
-        setCurrentRoom(roomNames[0])
-      }
-      await getSystemName()
-      await getAllRooms()
+      const roomNames = await getAllRooms()
+      setAllRooms(roomNames)
+      setCurrentRoom(roomNames[0])
       makeLoadingFalse()
     }
     getStateOnMount()
@@ -130,11 +113,12 @@ const Main = (props) => {
                                     renameAlter={renameAlter} 
                                     reproxyAlter={reproxyAlter} 
                                     newAlterIntro={newAlterIntro} 
-                                    updateNewAlterIntro={updateNewAlterIntro} /> }
+                                    updateNewAlterIntro={updateNewAlterIntro}
+                                    updateLocalSystem={updateLocalSystem} /> }
             { nav == 'reminders' && <Reminders /> }
             { nav == 'diary' && <Diary /> }
             { nav == 'settings' && <Settings  
-                                      updateSettings={updateSettings} /> }
+                                      updateLocalSettings={updateLocalSettings} /> }
             { nav == 'about' && <About /> }
             { nav == 'manageRooms' && <ManageRooms 
                                         allRooms={allRooms} 
@@ -152,8 +136,7 @@ const Main = (props) => {
           { mainMenuOpen && 
               <MainMenu 
                 style={styles.MainMenu} 
-                toggleMainMenu={toggleMainMenu} 
-                systemName={systemName} 
+                toggleMainMenu={toggleMainMenu}  
                 logOut={logOut} 
                 handleNav={handleNav} 
                 allRooms={allRooms} 

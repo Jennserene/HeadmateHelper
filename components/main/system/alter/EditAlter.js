@@ -1,13 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import Context from '../../../../Context'
+import { updateAlter } from '../../../../Firebase';
 import AlterField from './AlterField'
 
 const EditAlter = (props) => {
 
   const context = useContext(Context)
 
-  const { alterData, toggleAlterView, renameAlter, reproxyAlter } = props
+  const { alterData, toggleAlterView, renameAlter, reproxyAlter, handleAlterData } = props
 
   const [alterObj, setAlterObj] = useState({...alterData})
   const [nameError, setNameError] = useState(null)
@@ -54,14 +55,6 @@ const EditAlter = (props) => {
     toggleAlterView('view')
   }
 
-  // const getAlterList = () => {
-  //   return context.allAlters.map( (alter) => {
-  //     if (alter !== context.frontName) {
-  //       return alter
-  //     }
-  //   })
-  // }
-
   const handleNameValidation = () => {
     if (alterObj.name !== context.frontName) {
       if (alterObj.name == '') {
@@ -85,8 +78,7 @@ const EditAlter = (props) => {
     }
     
     // Handle submit
-    // Replace with updateAlter(alterID, alterObj) from ../../../../Firebase.js
-    const dbalter = await context.db.collection('users').doc(context.user.uid).collection('alters').doc(alterData.id).update(alterObj)
+    await updateAlter(alterData.id, alterObj)
     if (alterObj.name !== context.front.name) {
       renameAlter(alterObj.name)
     }
@@ -94,6 +86,7 @@ const EditAlter = (props) => {
       reproxyAlter(alterObj.proxy)
     }
     setNameError('')
+    handleAlterData(alterObj)
     toggleAlterView('view')
   }
 

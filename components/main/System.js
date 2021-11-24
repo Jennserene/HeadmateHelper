@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import Context from '../../Context'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import ViewSystem from './system/ViewSystem'
 import EditSystem from './system/EditSystem'
 import AlterList from './system/AlterList'
@@ -12,16 +11,10 @@ const System = (props) => {
 
   const context = useContext(Context)
 
-  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro } = props
+  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro, updateLocalSystem } = props
 
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
-
-  // CONVERT TO USE DATA FROM APP.JS ON FIREBASE UPGRADE
-  const documentRef = context.db.collection("users").doc(context.user.uid)
-  const [systemData] = useDocumentData(documentRef, { idField: 'id' })
-
-  // console.log('DATA: ', systemData)
 
   const toggleSystemView = (page) => {
     setSystemView(page)
@@ -36,12 +29,11 @@ const System = (props) => {
     <View style={styles.Container}>
 
       <View style={styles.SystemView}>
-        { (systemView == 'view' && systemData) && <ViewSystem 
-                                                    systemData={systemData} 
+        { (systemView == 'view') && <ViewSystem 
                                                     toggleSystemView={toggleSystemView} /> }
-        { (systemView == 'edit' && systemData) && <EditSystem 
-                                                    systemData={systemData} 
-                                                    toggleSystemView={toggleSystemView} /> }
+        { (systemView == 'edit') && <EditSystem 
+                                                    toggleSystemView={toggleSystemView}
+                                                    updateLocalSystem={updateLocalSystem} /> }
         { (systemView == 'alter') && <Alter 
                                       alter={alterFocus} 
                                       toggleSystemView={toggleSystemView} 

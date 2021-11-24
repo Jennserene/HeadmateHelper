@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import Context from '../../../Context'
-import * as firebase from 'firebase'
+import { putNewRoom } from '../../../Firebase'
 import SingleRoom from './SingleRoom'
 
 const EditRooms = (props) => {
@@ -43,18 +43,12 @@ const EditRooms = (props) => {
       setError('There is already a room by that name')
       return
     }
-    const newRoom = {
-      roomName: newRoomName,
-      createdAt: firebase.firestore.FieldValue.serverTimestamp()
-    }
-    try {
-      // Replace with putNewRoom(newRoomName) from ../../../Firebase.js
-      const newRoomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').add(newRoom)
-      handleRoomAdd(newRoomName, newRoomDB.id)
+    const newRoomID = await putNewRoom(newRoomName)
+    if (newRoomID) {
+      handleRoomAdd(newRoomName, newRoomID)
       setError('')
       setNewRoomName('')
-    } catch (err) {
-      console.log(err)
+    } else {
       setError('Something went wrong!')
     }
   }

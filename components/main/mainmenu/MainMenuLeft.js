@@ -5,7 +5,6 @@ const MainMenuLeft = (props) => {
 
   const { logOut, handleNav } = props
 
-  // Replace with firebaseLogOut() from ../../../Firebase.js
   const handleLogOut = () => {
     logOut()
   }

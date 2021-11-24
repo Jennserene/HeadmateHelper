@@ -1,8 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import Context from '../../../Context'
-// import ChatMsg from './ChatMsg'
-// import { useCollectionData } from 'react-firebase-hooks/firestore'
+import { getNewMsg, getInitChatQuery, getMoreChatQuery, getLastChatSnapShot } from '../../../Firebase'
 
 const ChatHistory = (props) => {
 
@@ -16,42 +15,14 @@ const ChatHistory = (props) => {
   const [loading, setLoading] = useState(false)
   const [lastSnapShot, setLastSnapShot] = useState(null)
 
-  // const messagesRef = context.db.collection("users").doc(contreatedAt', '>', lastMsgDateTiext.user.uid).collection('rooms').doc(roomID).collection('chats')
-  // const query = messagesRef.orderBy('createdAt').limit(limit)
-  // const [initMessages] = useCollectionData(query, { idField: 'id' })
-
-  // useEffect( () => {
-  //   if (initMessages) {
-  //     setlastMsgDateTime(initMessages[initMessages.length -1].createdAt)
-  //   }
-  // }, [initMessages])
-
-  // const printMsgs = () => {
-  //   return messages.map( (msg) => {
-  //     return <ChatMsg key={msg.id} message={msg} />
-  //   })
-  // }
-
   useEffect( () => {
     const addNewMsg = async () => {
       if (newMsg) {
-        try {
-          // Replace with getNewMsg(roomID, newMsg) from ../../../Firebase.js
-          const dbMsg = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats').doc(newMsg)
-          const newData = await dbMsg.get().then(documentSnapshot => { // get document, THEN take snapshot of document
-            if (documentSnapshot.exists) { // does document exist?
-              return documentSnapshot.data()
-            } else {
-              return false
-            }
-          })
-          if (documentData) {
-            setDocumentData([...documentData, newData])
-          } else {
-            setDocumentData([newData])
-          }
-        } catch (err) {
-          console.error(err)
+        const msg = await getNewMsg(roomID, newMsg)
+        if (documentData) {
+          setDocumentData([...documentData, msg])
+        } else {
+          setDocumentData([msg])
         }
       }
     }
@@ -62,38 +33,14 @@ const ChatHistory = (props) => {
     setDocumentData(null)
     // Retrieve Data
     retrieveData = async () => {
-      try {
-        // Set State: Loading
-        setLoading(true)
-        // Replace with getInitChatQuery(roomID, limitNum) from ../../../Firebase.js
-        // Cloud Firestore: Query
-        const queryPath = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
-        let initialQuery = await queryPath
-          // .where('id', '<=', 20)
-          .orderBy('createdAt')
-          .limitToLast(limit)
-        // Cloud Firestore: Query Snapshot
-        let documentSnapshots = await initialQuery.get();
-        // Cloud Firestore: Document Data
-        let newDocumentData = documentSnapshots.docs.map((document) => {
-          const docData = document.data()
-          const docID = document.id
-          const docObj = {id: docID, ...docData}
-          return docObj
-        });
-        // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-        if (newDocumentData.length > 0) {
-          // Replace with getLastChatSnapShot(roomID, lastDocID) from ../../../Firebase.js
-          const docSnap = await queryPath.doc(newDocumentData[0].id).get()
-          // Set State
-          setDocumentData(newDocumentData)
-          setLastSnapShot(docSnap)
-        }
-        setLoading(false)
+      setLoading(true)
+      const chatData = await getInitChatQuery(roomID, limit)
+      if (chatData.length > 0) {
+        const lastChatSnap = await getLastChatSnapShot(roomID, chatData[0].id)
+        setDocumentData(chatData)
+        setLastSnapShot(lastChatSnap)
       }
-      catch (error) {
-        console.log(error);
-      }
+      setLoading(false)
     };
     retrieveData()
   }, [roomID])
@@ -101,42 +48,14 @@ const ChatHistory = (props) => {
   // Retrieve More
   const retrieveMore = async () => {
     if (documentData.length < 40) {return}
-    try {
-      // Set State: Refreshing
-      setRefreshing(true)
-
-      // Replace with getMoreChatQuery(roomID, limitNum, lastSnapShot) from ../../../Firebase.js
-      // Cloud Firestore: Query (Additional Query)
-      const queryPath = await context.db.collection("users").doc(context.user.uid).collection('rooms').doc(roomID).collection('chats')
-      let additionalQuery = await queryPath
-        .orderBy('createdAt', 'desc')
-        .startAfter(lastSnapShot)
-        .limit(limit)
-      // Cloud Firestore: Query Snapshot
-      let documentSnapshots = await additionalQuery.get();
-
-      // Cloud Firestore: Document Data
-      let newDocumentDataReversed = documentSnapshots.docs.map((document) => {
-        const docData = document.data()
-        const docID = document.id
-        const docObj = {id: docID, ...docData}
-        return docObj
-      });
-      let newDocumentData = newDocumentDataReversed.reverse()
-      // Cloud Firestore: Last Visible Document (Document ID To Start From For Proceeding Queries)
-      if (newDocumentData.length > 0) {
-        // Replace with getLastChatSnapShot(roomID, lastDocID) from ../../../Firebase.js
-        const docSnap = await queryPath.doc(newDocumentData[0].id).get()
-        // Set State
-        setDocumentData([...newDocumentData, ...documentData])
-        setLastSnapShot(docSnap)
-      }
-      setRefreshing(false)
-
+    setRefreshing(true)
+    const moreChatData = await getMoreChatQuery(roomID, limit, lastSnapShot)
+    if (moreChatData.length > 0) {
+      const lastChatSnap = await getLastChatSnapShot(roomID, moreChatData[0].id)
+      setDocumentData([...moreChatData, ...documentData])
+      setLastSnapShot(lastChatSnap)
     }
-    catch (error) {
-      console.log(error);
-    }
+    setRefreshing(false)
   };
 
   const renderHeader = () => {

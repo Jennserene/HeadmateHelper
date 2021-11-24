@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import Context from '../../../Context'
-import * as firebase from 'firebase'
+import { updateRoomName, deleteRoom } from '../../../Firebase'
 
 const SingleRoom = (props) => {
 
@@ -10,7 +10,7 @@ const SingleRoom = (props) => {
   const { room, allRooms, handleRoomDelete, handleRoomUpdate } = props
 
   const [editRoom, setEditRoom] = useState(false)
-  const [roomName, setRoomName] = useState(room[0])
+  const [roomName, setRoomName] = useState(room.name)
   const [error, setError] = useState('')
 
   const toggleEdit = () => {
@@ -27,16 +27,8 @@ const SingleRoom = (props) => {
       setError('To delete this room you must set the room name to "Delete Me!" (Case sensitive)')
       return
     }
-    try {
-      // Replace with deleteRoom(RoomID) from ../../../Firebase.js
-      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).get()
-      roomDB.ref.delete()
-      setError('')
-      handleRoomDelete(room.id) // remove the room from allRooms
-    } catch (err) {
-      console.error(err)
-      setError('Something went wrong!')
-    }
+    await deleteRoom(room.id)
+    handleRoomDelete(room.id) // remove the room from allRooms
   }
 
   const handleSubmit = async () => {
@@ -48,15 +40,9 @@ const SingleRoom = (props) => {
       setError('There is already a room by that name')
       return
     }
-    try {
-      // Replace with updateRoomName(roomID, roomName) from ../../../Firebase.js
-      const roomDB = await context.db.collection('users').doc(context.user.uid).collection('rooms').doc(room.id).update({roomName: roomName})
-      handleRoomUpdate(room.id, roomName)// Update allRooms by changing this room name
-      toggleEdit()
-    } catch (err) {
-      console.error(err)
-      setError('Something went wrong!')
-    }
+    await updateRoomName(room.id, roomName)
+    handleRoomUpdate(room.id, roomName)// Update allRooms by changing this room name
+    toggleEdit()
   }
 
   const handleName = (name) => {

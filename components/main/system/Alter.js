@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import Context from '../../../Context'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
 import ViewAlter from './alter/ViewAlter'
 import EditAlter from './alter/EditAlter'
+import { getAlter } from '../../../Firebase';
 
 const Alter = (props) => {
 
@@ -12,13 +12,22 @@ const Alter = (props) => {
   const { alter, toggleSystemView, renameAlter, reproxyAlter } = props
 
   const [alterView, setAlterView] = useState('view')
+  const [alterData, setAlterData] = useState(null)
 
-  // Replace with getAlter(alterID) from ../../../Firebase.js
-  const documentRef = context.db.collection("users").doc(context.user.uid).collection("alters").doc(alter.id)
-  const [alterData] = useDocumentData(documentRef, { idField: 'id' })
+  useEffect( () => {
+    const retrieveAlterData = async () => {
+      const alterDoc = await getAlter(alter.id)
+      setAlterData(alterDoc)
+    }
+    retrieveAlterData()
+  }, [])
 
   const toggleAlterView = (page) => {
     setAlterView(page)
+  }
+
+  const handleAlterData = (alterObj) => {
+    setAlterData(alterObj)
   }
 
   return (
@@ -31,7 +40,8 @@ const Alter = (props) => {
                                                   alterData={alterData} 
                                                   toggleAlterView={toggleAlterView} 
                                                   renameAlter={renameAlter} 
-                                                  reproxyAlter={reproxyAlter} /> }
+                                                  reproxyAlter={reproxyAlter}
+                                                  handleAlterData={handleAlterData} /> }
     </View>
   );
 }

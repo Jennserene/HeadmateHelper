@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import MainMenuLeft from './mainmenu/MainMenuLeft'
 import MainMenuRight from './mainmenu/MainMenuRight'
+import Context from '../../Context'
 
 const MainMenu = (props) => {
 
-  const { toggleMainMenu, systemName, logOut, handleNav, allRooms, handleRoomChange } = props
+  const context = useContext(Context)
+
+  const { toggleMainMenu, logOut, handleNav, allRooms, handleRoomChange } = props
 
   // Close the switch menu
   const MainToggle = () => {
@@ -16,7 +19,7 @@ const MainMenu = (props) => {
     <View style={styles.ContainerView}>
       <View style={styles.MenuView}>
         <View style={styles.HeaderView}>
-          <Text>{systemName}</Text>
+          <Text>{context.system.systemName}</Text>
         </View>
         <View style={styles.MenuContentsView}>
           <View style={styles.LeftMenuView}>
