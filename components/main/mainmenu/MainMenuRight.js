@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
+import { setRoomTypePublic } from '../../../Firebase'
 
 const MainMenuRight = (props) => {
 
@@ -9,9 +10,18 @@ const MainMenuRight = (props) => {
     handleRoomChange(room)
   }
 
+  const publicRoomsFilter = (room) => {
+    if (room.type == undefined) { // TEMP - in case room does not have type
+      setRoomTypePublic(room.id)
+      return true
+    }
+    if (room.type == 'public') {return true}
+  }
+
   const printAllRooms = () => {
     if (allRooms) {
-      return allRooms.map( (room) => {
+      const allPublicRooms = allRooms.filter(publicRoomsFilter)
+      return allPublicRooms.map( (room) => {
         return <View key={room.id} style={styles.LinkView}>
         <Pressable 
             onPress={ () => {changeRoom(room)}}

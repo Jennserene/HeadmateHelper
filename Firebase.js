@@ -1,7 +1,10 @@
 import ApiKeys from './constants/ApiKeys'
 import { initializeApp } from 'firebase/app' // THEN:
 // Initialize Firebase
-initializeApp(ApiKeys.FirebaseConfig);
+const firebaseApp = initializeApp(ApiKeys.FirebaseConfig);
+
+import { getReactNativePersistence } from 'firebase/auth/react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 import { 
           getFirestore, 
@@ -14,14 +17,15 @@ import {
           updateDoc, 
           serverTimestamp,
           setDoc,
-          onSnapshot,
+          // onSnapshot,
           deleteDoc,
           orderBy,
           limit,
           startAfter,
         } from "firebase/firestore"
 import { 
-          getAuth, 
+          // getAuth, 
+          initializeAuth,
           onAuthStateChanged, 
           signInWithEmailAndPassword, 
           createUserWithEmailAndPassword, 
@@ -30,7 +34,10 @@ import {
 
 const db = getFirestore()
 
-const auth = getAuth()
+// const auth = getAuth()
+const auth = initializeAuth(firebaseApp, {
+  persistence: getReactNativePersistence(AsyncStorage),
+})
 let userUID = ''
 
 onAuthStateChanged(auth, (user => {
@@ -118,6 +125,7 @@ export const getAllRooms = async () => {
       roomData.push({
         name: roomObj.roomName,
         id: doc.id,
+        type: roomObj.type
       })
     })
     return roomData
@@ -280,11 +288,12 @@ export const putNewMsg = async (roomID, newMsgRaw) => {
 }
 
 // used in ./components/main/managerooms/EditRooms.js in handleSubmit()
-export const putNewRoom = async (newRoomName) => {
+export const putPublicNewRoom = async (newRoomName) => {
   try {
     const newRoom = {
       roomName: newRoomName,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      type: 'public'
     }
     const roomsRef = collection(db, `users/${userUID}/rooms`)
     const docSnap = await addDoc(roomsRef, newRoom)
@@ -380,5 +389,18 @@ export const updateAlter = async (alterID, alterObj) => {
     await updateDoc(alterRef, alterObj)
   } catch (err) {
     console.log('ERROR in updateAlter:', err)
+  }
+}
+
+// TEMP - used to update preexisting rooms data to fit standard
+// used in .components/main/mainmenu/MainMenuRight.js in printAllRooms()
+export const setRoomTypePublic = async (roomID) => {
+  try {
+    const roomRef = doc(db, `users/${userUID}/rooms`, roomID)
+    await updateDoc(roomRef, {
+      type: 'public',
+    })
+  } catch (err) {
+    console.log('ERROR in updateRoomName:', err)
   }
 }

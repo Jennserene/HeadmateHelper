@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import Context from '../../../Context'
-import { putNewRoom } from '../../../Firebase'
+import { putNewPublicRoom } from '../../../Firebase'
 import SingleRoom from './SingleRoom'
 
 const EditRooms = (props) => {
@@ -43,7 +43,7 @@ const EditRooms = (props) => {
       setError('There is already a room by that name')
       return
     }
-    const newRoomID = await putNewRoom(newRoomName)
+    const newRoomID = await putNewPublicRoom(newRoomName)
     if (newRoomID) {
       handleRoomAdd(newRoomName, newRoomID)
       setError('')

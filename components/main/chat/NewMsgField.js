@@ -36,9 +36,7 @@ const NewMsgField = (props) => {
   }
 
   const SubmitMsg = async () => {
-    if (msgText == '') {
-      return
-    }
+    if (msgText == '') {return}
     const [modAuthor, modMsgText] = CheckForProxies()
     const newMsg = {
       avatar: null,
@@ -57,6 +55,7 @@ const NewMsgField = (props) => {
           style={styles.inputField}
           placeholder="Your Msg Here"
           value={msgText}
+          onSubmitEditing={() => SubmitMsg()}
           onChangeText={text => HandleMsgText(text)}/>
       <Pressable 
           style={styles.submitButton} 

@@ -28,7 +28,7 @@ WebBrowser.maybeCompleteAuthSession()
 const App = () => {
 
   // WARNING SUPPRESSED! THIS SHOULD BE REMOVED AND THE WARNING FIXED
-  LogBox.ignoreLogs(['Warning: Async Storage has been extracted from react-native core'])
+  LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core'])
 
   // Set State
   const [user, setUser] = useState(null)

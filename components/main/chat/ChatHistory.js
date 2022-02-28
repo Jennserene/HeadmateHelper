@@ -52,7 +52,7 @@ const ChatHistory = (props) => {
   // Retrieve More
   const retrieveMore = async () => {
     if (documentData.length < limit) {return}
-    console.log('Retrieving more chat data')
+    // console.log('Retrieving more chat data')
     setRefreshing(true)
     const moreChatDataReversed = await getMoreChatQuery(roomID, limit, lastSnapShot)
     const moreChatData = moreChatDataReversed.reverse()
