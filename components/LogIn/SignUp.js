@@ -31,13 +31,13 @@ const SignUp = (props) => {
       setRepeatError('Password and Repeat Password must be identical')
       return
     }
-    const user = firebaseSignUp(emailText, passwordText)
+    const user = await firebaseSignUp(emailText, passwordText)
     if (user.uid) {
       setErrorCode('')
       setErrorMessage('')
     } else {
       setErrorCode(user.code)
-      setErrorMessage(user.message)
+      setErrorMessage(user.msg)
     }
   }
 
@@ -108,10 +108,11 @@ const styles = StyleSheet.create({
   },
   IndButtonView: {
     backgroundColor: 'aqua',
-    width: 70,
-    height: 30,
+    width: 100,
+    height: 50,
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 10,
   },
   InputField: {
     width: '70%',

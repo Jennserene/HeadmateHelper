@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
 import Context from '../../../Context'
 import { getNewMsg, getInitChatQuery, getMoreChatQuery, getLastChatSnapShot } from '../../../Firebase'
@@ -6,11 +6,12 @@ import { getNewMsg, getInitChatQuery, getMoreChatQuery, getLastChatSnapShot } fr
 const ChatHistory = (props) => {
 
   const context = useContext(Context)
+  const flatlistRef = useRef()
 
   const { roomID, newMsg } = props
 
   const [refreshing, setRefreshing] = useState(false)
-  const [limit, setLimit] = useState(40)
+  const [limit, setLimit] = useState(30)
   const [documentData, setDocumentData] = useState(null)
   const [loading, setLoading] = useState(false)
   const [lastSnapShot, setLastSnapShot] = useState(null)
@@ -18,9 +19,11 @@ const ChatHistory = (props) => {
   useEffect( () => {
     const addNewMsg = async () => {
       if (newMsg) {
+        // trimLength()
+        flatlistRef.current.scrollToOffset({animating: true, offset: 0})
         const msg = await getNewMsg(roomID, newMsg)
         if (documentData) {
-          setDocumentData([...documentData, msg])
+          setDocumentData([msg, ...documentData])
         } else {
           setDocumentData([msg])
         }
@@ -35,8 +38,9 @@ const ChatHistory = (props) => {
     retrieveData = async () => {
       setLoading(true)
       const chatData = await getInitChatQuery(roomID, limit)
+      // const chatData = reversedChatData.reverse()
       if (chatData.length > 0) {
-        const lastChatSnap = await getLastChatSnapShot(roomID, chatData[0].id)
+        const lastChatSnap = await getLastChatSnapShot(roomID, chatData[chatData.length - 1].id)
         setDocumentData(chatData)
         setLastSnapShot(lastChatSnap)
       }
@@ -47,12 +51,15 @@ const ChatHistory = (props) => {
 
   // Retrieve More
   const retrieveMore = async () => {
-    if (documentData.length < 40) {return}
+    if (documentData.length < limit) {return}
+    console.log('Retrieving more chat data')
     setRefreshing(true)
-    const moreChatData = await getMoreChatQuery(roomID, limit, lastSnapShot)
+    const moreChatDataReversed = await getMoreChatQuery(roomID, limit, lastSnapShot)
+    const moreChatData = moreChatDataReversed.reverse()
     if (moreChatData.length > 0) {
-      const lastChatSnap = await getLastChatSnapShot(roomID, moreChatData[0].id)
-      setDocumentData([...moreChatData, ...documentData])
+      const lastChatSnap = await getLastChatSnapShot(roomID, moreChatData[moreChatData.length - 1].id)
+      // setDocumentData([...moreChatData, ...documentData])
+      setDocumentData([...documentData, ...moreChatData])
       setLastSnapShot(lastChatSnap)
     }
     setRefreshing(false)
@@ -75,6 +82,26 @@ const ChatHistory = (props) => {
     }
   };
 
+  // const trimLength = () => {
+  //   const docArray = [...documentData]
+  //   let testBool = false
+  //   while (docArray.length > 60) {
+  //     if (!testBool) {
+  //       console.log('Trimming chat data')
+  //       testBool = true
+  //     }
+  //     docArray.pop()
+  //   }
+  //   setDocumentData(docArray)
+  // }
+
+  // IN FLATLIST COMPONENT
+  // onMomentumScrollEnd={e => {
+  //   if (e.nativeEvent.contentOffset.y === 0) {
+  //     trimLength()
+  //   }
+  // }}
+
   return (
     <View style={styles.ChatHistView}>
       {/* { messages && printMsgs() } */}
@@ -95,13 +122,14 @@ const ChatHistory = (props) => {
             </View>
           </View>
         )}
-        contentContainerStyle={styles.FlatListContainer}
         inverted
+        contentContainerStyle={styles.FlatListContainer}
         keyExtractor={(item, index) => String(index)} // Item Key
         onEndReached={() => {retrieveMore()}} // On End Reached (Takes a function)
-        onEndReachedThreshold={1} // How Close To The End Of List Until Next Data Request Is Made
+        onEndReachedThreshold={0.5} // How Close To The End Of List Until Next Data Request Is Made
         refreshing={refreshing} // Refreshing (Set To True When End Reached)
         ListHeaderComponent={renderHeader} // Header (Activity Indicator)
+        ref={flatlistRef}
       />
     </View>
   );
@@ -113,7 +141,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   FlatListContainer: {
-    flexDirection: 'column-reverse'
+    flexDirection: 'column'
   },
   ContView: {
     flexShrink: 1,

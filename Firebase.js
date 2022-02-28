@@ -18,6 +18,7 @@ import {
           deleteDoc,
           orderBy,
           limit,
+          startAfter,
         } from "firebase/firestore"
 import { 
           getAuth, 
@@ -53,6 +54,9 @@ export const getSystemData = async () => {
       return sysObj
     } else {
       console.log('ERROR in getSystemData: Account data does not exist!')
+      return {
+        id: userUID,
+      }
     }
   } catch (err) {
     console.log('ERROR in getSystemData:', err)
@@ -208,7 +212,7 @@ export const getNewMsg = async (roomID, newMsg) => {
 export const getInitChatQuery = async (roomID, limitNum) => {
   try {
     const chatsRef = collection(db, `users/${userUID}/rooms/${roomID}/chats`)
-    const q = query(chatsRef, orderBy('createdAt'), limit(limitNum))
+    const q = query(chatsRef, orderBy('createdAt', 'desc'), limit(limitNum))
     const querySnapshot = await getDocs(q)
     let newChatData = []
     querySnapshot.forEach((doc) => {

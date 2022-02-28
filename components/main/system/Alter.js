@@ -22,6 +22,14 @@ const Alter = (props) => {
     retrieveAlterData()
   }, [])
 
+  // If front changes while editing, return to view
+  useEffect( () => {
+    const watchForFrontChange = () => {
+      setAlterView('view')
+    }
+    watchForFrontChange()
+  }, [context.front.name])
+
   const toggleAlterView = (page) => {
     setAlterView(page)
   }

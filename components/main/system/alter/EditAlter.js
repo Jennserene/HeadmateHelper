@@ -13,23 +13,22 @@ const EditAlter = (props) => {
   const [alterObj, setAlterObj] = useState({...alterData})
   const [nameError, setNameError] = useState(null)
 
-  const fields = [ // All the editable fields in Alter Profile
-    // field[0] = label, field[1] = fieldName, field[2] = multiline
-    ['Name', 'name', false],
-    ['Proxy', 'proxy', false],
-    ['Age', 'age', false],
-    ['Birthday', 'birthday', false],
-    ['Arrival Day', 'arrivalDay', false],
-    ['Species', 'species', false],
-    ['Sexuality', 'sexuality', false],
-    ['Gender', 'gender', false],
-    ['Roles', 'roles', true],
-    ['Tells', 'tells', true],
-    ['Triggers', 'triggers', true],
-    ['About Me', 'aboutMe', true],
-    ['Fusion Of', 'fusionOf', false],
-    ['Appearance', 'appearance', true],
-    ['Relationships', 'relationships', true],
+  const fields = [
+    {label: 'Name', fieldName: 'name', multiline: false},
+    {label: 'Proxy', fieldName: 'proxy', multiline: false},
+    {label: 'Age', fieldName: 'age', multiline: false},
+    {label: 'Birthday', fieldName: 'birthday', multiline: false},
+    {label: 'Arrival Day', fieldName: 'arrivalDay', multiline: false},
+    {label: 'Species', fieldName: 'species', multiline: false},
+    {label: 'Sexuality', fieldName: 'sexuality', multiline: false},
+    {label: 'Gender', fieldName: 'gender', multiline: false},
+    {label: 'Roles', fieldName: 'roles', multiline: true},
+    {label: 'Tells', fieldName: 'tells', multiline: true},
+    {label: 'Triggers', fieldName: 'triggers', multiline: true},
+    {label: 'About Me', fieldName: 'aboutMe', multiline: true},
+    {label: 'Fusion Of', fieldName: 'fusionOf', multiline: false},
+    {label: 'Appearance', fieldName: 'appearance', multiline: true},
+    {label: 'Relationships', fieldName: 'relationships', multiline: true},
   ]
 
   const handleFieldUpdate = (field, value) => {
@@ -41,11 +40,11 @@ const EditAlter = (props) => {
   const printInputFields = () => {
     return fields.map( (field) => {
       return <AlterField 
-              key={field[1]}
-              label={field[0]} 
-              fieldName={field[1]} 
-              content={alterObj[field[1]]} 
-              multi={field[2]}
+              key={field.fieldName}
+              label={field.label} 
+              fieldName={field.fieldName} 
+              content={alterObj[field.fieldName]} 
+              multi={field.multiline}
               handleFieldUpdate={handleFieldUpdate}
               nameError={nameError} />
     })
@@ -56,7 +55,7 @@ const EditAlter = (props) => {
   }
 
   const handleNameValidation = () => {
-    if (alterObj.name !== context.frontName) {
+    if (alterObj.name !== context.front.name) {
       if (alterObj.name == '') {
         console.log('name is blank')
         setNameError('Alter name can not be blank')

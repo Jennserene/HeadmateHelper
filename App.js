@@ -62,7 +62,9 @@ const App = () => {
         try {
           const sysObj = await getSystemData()
           setSystem(sysObj)
-          setNewAlterIntro(sysObj.newAlterIntro)
+          if (newAlterIntro in sysObj) {
+            setNewAlterIntro(sysObj.newAlterIntro)
+          }
           // check if settings object exists and if so handle defaults one by one
           let tempSettings = {}
           if ('settings' in sysObj) {
@@ -108,6 +110,7 @@ const App = () => {
   // Initialize the account
   const initializeAccount = () => {
     setAccountInit(true)
+    setAllAlters([{name: 'Unknown', id: 'unknown'}])
     setMainMenuOpen(false)
     setSwitchMenuOpen(true)
   }
