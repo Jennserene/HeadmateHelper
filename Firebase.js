@@ -125,7 +125,9 @@ export const getAllRooms = async () => {
       roomData.push({
         name: roomObj.roomName,
         id: doc.id,
-        type: roomObj.type
+        type: roomObj.type,
+        participants: roomObj.participants,
+        lastActivity: roomObj.lastActivity,
       })
     })
     return roomData
@@ -299,7 +301,7 @@ export const putPublicNewRoom = async (newRoomName) => {
     const docSnap = await addDoc(roomsRef, newRoom)
     return docSnap.id
   } catch (err) {
-    console.log('ERROR in putNewRoom:', err)
+    console.log('ERROR in putPublicNewRoom:', err)
   }
 }
 
@@ -393,7 +395,7 @@ export const updateAlter = async (alterID, alterObj) => {
 }
 
 // TEMP - used to update preexisting rooms data to fit standard
-// used in .components/main/mainmenu/MainMenuRight.js in printAllRooms()
+// used in .components/main/mainmenu/MainMenuRight.js in publicRoomsFilter()
 export const setRoomTypePublic = async (roomID) => {
   try {
     const roomRef = doc(db, `users/${userUID}/rooms`, roomID)
@@ -402,5 +404,43 @@ export const setRoomTypePublic = async (roomID) => {
     })
   } catch (err) {
     console.log('ERROR in updateRoomName:', err)
+  }
+}
+
+// used in ./components/main/managerooms/Main.js in createDM()
+export const putDMNewRoom = async (alters) => {
+  try {
+    let newRoomName = ''
+    for (alter of alters) {
+      if (newRoomName == '') {
+        newRoomName = alter.name
+      } else {
+        newRoomName = newRoomName + ', ' + alter.name
+      }
+    }
+    const newRoom = {
+      roomName: newRoomName,
+      createdAt: serverTimestamp(),
+      type: 'DM',
+      participants: alters,
+      lastActivity: serverTimestamp(),
+    }
+    const roomsRef = collection(db, `users/${userUID}/rooms`)
+    const docSnap = await addDoc(roomsRef, newRoom)
+    return docSnap.id
+  } catch (err) {
+    console.log('ERROR in putDMNewRoom:', err)
+  }
+}
+
+// used in ./components/main/chat/NewMsgField.js in SubmitMsg()
+export const updateDMLastActivity = async (roomID) => {
+  try {
+    const roomRef = doc(db, `users/${userUID}/rooms`, roomID)
+    await updateDoc(roomRef, {
+      lastActivity: serverTimestamp(),
+    })
+  } catch (err) {
+    console.log('ERROR in updateDMLastActivity:', err)
   }
 }

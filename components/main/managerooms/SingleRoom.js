@@ -19,7 +19,7 @@ const SingleRoom = (props) => {
   }
 
   const handleDelete = async () => {
-    if (allRooms.length < 2) {
+    if (allRooms.length < 2 && room.type == 'public') {
       setError('You must have at least 1 room!')
       return
     }

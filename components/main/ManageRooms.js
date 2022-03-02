@@ -7,17 +7,33 @@ const ManageRooms = (props) => {
 
   const { allRooms, handleRoomDelete, handleRoomUpdate, handleRoomAdd } = props
 
+  const [ publicRooms, setPublicRooms ] = useState(null)
+  const [ allDMs, setAllDMs ] = useState(null)
+
+  useEffect( () => {
+    const getRoomsOnMount = () => {
+      const pRooms = allRooms.filter( room => room.type == 'public' )
+      const DMs = allRooms.filter( room => room.type == 'DM' )
+      setPublicRooms(pRooms)
+      setAllDMs(DMs)
+    }
+    getRoomsOnMount()
+  }, [])
+
   return (
     <ScrollView>
       <View style={styles.RoomsView}>
-        <EditRooms 
-          allRooms={allRooms}
+        { publicRooms && <EditRooms 
+          allRooms={publicRooms}
           handleRoomDelete={handleRoomDelete}
           handleRoomUpdate={handleRoomUpdate}
-          handleRoomAdd={handleRoomAdd} />
+          handleRoomAdd={handleRoomAdd} /> }
       </View>
       <View style={styles.DMsView}>
-        <EditDMs />
+        { allDMs && <EditDMs 
+          allRooms={allDMs}
+          handleRoomDelete={handleRoomDelete}
+          handleRoomUpdate={handleRoomUpdate}/> }
       </View>
     </ScrollView>
   );

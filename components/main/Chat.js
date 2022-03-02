@@ -23,7 +23,7 @@ const Chat = (props) => {
         { currentRoom && <ChatHistory roomID={currentRoom.id} newMsg={newMsg} /> }
       </View>
       <View style={styles.msgFieldView}>
-        <NewMsgField roomID={currentRoom.id} updateNewMsg={updateNewMsg} />
+        <NewMsgField updateNewMsg={updateNewMsg} room={currentRoom} />
       </View>
     </View>
   );

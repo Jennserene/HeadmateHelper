@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
 import Context from '../Context'
-import { getAllRooms } from '../Firebase.js'
+import { getAllRooms, putDMNewRoom } from '../Firebase.js'
 
 // Import components
 import Chat from './main/Chat'
@@ -98,7 +98,60 @@ const Main = (props) => {
   // Add a room to allRooms
   const handleRoomAdd = (roomName, roomID) => {
     let roomArr = [...allRooms]
-    roomArr.push({name: roomName, id: roomID})
+    roomArr.push({name: roomName, id: roomID, type: 'public'})
+    setAllRooms(roomArr)
+  }
+
+  // Open a DM or create it if it doesn't exist
+  const openDM = async (alters) => {
+    const numParticipants = alters.length
+    const allDMs = allRooms.filter( room => room.type == 'DM' )
+    const rightLengthDMs = allDMs.filter( room => room.participants.length == numParticipants)
+    for (let i = 0; i < rightLengthDMs.length; i++) {
+      let correctDM = true
+      const IDs = []
+      for (let a = 0; a < numParticipants; a++) {
+        IDs.push(rightLengthDMs[i].participants[a].id)
+      }
+      for (let a = 0; a < numParticipants; a++) {
+        if (!IDs.includes(alters[a].id)) {
+          correctDM = false
+          break
+        }
+      }
+      if (correctDM) {
+        handleRoomChange(foundDM)
+        return
+      }
+    }
+    await createDM(alters)
+  }
+
+  const createDM = async (alters) => {
+    const roomID = await putDMNewRoom(alters)
+    handleDMAdd(roomID, alters)
+  }
+
+  // Add a DM to allRooms
+  const handleDMAdd = (roomID, alters) => {
+    const allDMs = allRooms.filter( room => room.type == 'DM' )
+    const mostRecentTime = Math.max.apply(Math, allDMs.map( (obj) => { return obj.lastActivity; } ))
+    let newRoomName = ''
+    for (alter of alters) {
+      if (newRoomName == '') {
+        newRoomName = alter.name
+      } else {
+        newRoomName = newRoomName + ', ' + alter.name
+      }
+    }
+    let roomArr = [...allRooms]
+    roomArr.push({
+                  name: newRoomName, 
+                  id: roomID, 
+                  type: 'DM', 
+                  lastActivity: (mostRecentTime + 1000),
+                  participants: alters,
+                })
     setAllRooms(roomArr)
   }
 
@@ -114,7 +167,8 @@ const Main = (props) => {
                                     reproxyAlter={reproxyAlter} 
                                     newAlterIntro={newAlterIntro} 
                                     updateNewAlterIntro={updateNewAlterIntro}
-                                    updateLocalSystem={updateLocalSystem} /> }
+                                    updateLocalSystem={updateLocalSystem}
+                                    openDM={openDM} /> }
             { nav == 'reminders' && <Reminders /> }
             { nav == 'diary' && <Diary /> }
             { nav == 'settings' && <Settings  

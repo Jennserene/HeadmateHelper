@@ -7,12 +7,12 @@ const AlterList = (props) => {
 
   const context = useContext(Context)
 
-  const { viewAlter } = props
+  const { viewAlter, openDM } = props
 
   const printAlters = () => {
     return context.allAlters.map( (alter) => {
       if (alter.id !== 'unknown') {
-        return <AlterSelection key={`sel-${alter.id}`} alter={alter} viewAlter={viewAlter} />
+        return <AlterSelection key={`sel-${alter.id}`} alter={alter} viewAlter={viewAlter} openDM={openDM} />
       }
     })
   }

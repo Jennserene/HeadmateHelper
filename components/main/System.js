@@ -11,7 +11,7 @@ const System = (props) => {
 
   const context = useContext(Context)
 
-  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro, updateLocalSystem } = props
+  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro, updateLocalSystem, openDM } = props
 
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
@@ -47,7 +47,7 @@ const System = (props) => {
       { (systemView == 'view' && context.allAlters) && 
         <ScrollView>
           <View style={styles.AltersView}>
-            <AlterList viewAlter={viewAlter}/>
+            <AlterList viewAlter={viewAlter} openDM={openDM}/>
           </View>
         </ScrollView> }
     </View>

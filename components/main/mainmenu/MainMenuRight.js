@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import { setRoomTypePublic } from '../../../Firebase'
+import Context from '../../../Context'
 
 const MainMenuRight = (props) => {
+
+  const context = useContext(Context)
 
   const { allRooms, handleRoomChange, toggleMainMenu, handleNav } = props
 
@@ -37,13 +40,43 @@ const MainMenuRight = (props) => {
     }
   }
 
+  const printRecentDMs = () => {
+    if (allRooms) {
+      const allDMsRaw = allRooms.filter(room => room.type == 'DM')
+      const myDMs = allDMsRaw.filter(room => {
+        for (const alter of room.participants) {
+          if (alter.id == context.front.id) {
+            return true
+          }
+        }})
+      myDMs.sort((a, b) => (a.lastActivity < b.lastActivity ? 1 : -1))
+      return myDMs.map( (room) => {
+        return <View key={room.id} style={styles.LinkView}>
+        <Pressable 
+            onPress={ () => {changeRoom(room)}}
+            accessible={true} 
+            accessibilityLabel={`Open the ${room.name} DM.`}
+            accessibilityRole="button">
+          <Text style={styles.LinkText}>{room.name}</Text>
+        </Pressable>
+      </View>
+      })
+    } else {
+      return <Text>Loading...</Text>
+    }
+  }
+
   return (
     <View style={styles.Container}>
-      <View style={styles.SubHeaderView}>
-        <Text style={styles.SubHeaderText}>Rooms</Text>
-      </View>
       <ScrollView>
+        <View style={styles.SubHeaderView}>
+          <Text style={styles.SubHeaderText}>Rooms</Text>
+        </View>
         { printAllRooms() }
+        <View style={styles.SubHeaderView}>
+          <Text style={styles.SubHeaderText}>Recent DMs</Text>
+        </View>
+        { printRecentDMs() }
       </ScrollView>
       <View style={styles.FooterView}>
         <Pressable 
@@ -51,7 +84,7 @@ const MainMenuRight = (props) => {
             accessible={true} 
             accessibilityLabel="Manage Rooms and DMs"
             accessibilityRole="button">
-          <Text>Manage Rooms</Text>
+          <Text>Manage Rooms/DMs</Text>
         </Pressable>
       </View>
     </View>

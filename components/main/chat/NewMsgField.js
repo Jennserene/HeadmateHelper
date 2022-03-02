@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react'
 import { View, Text, Pressable, TextInput, StyleSheet } from 'react-native';
 import Context from '../../../Context'
-import { putNewMsg } from '../../../Firebase'
+import { putNewMsg, updateDMLastActivity } from '../../../Firebase'
 
 const NewMsgField = (props) => {
 
@@ -9,7 +9,7 @@ const NewMsgField = (props) => {
 
   const [msgText, setMsgText] = useState('')
 
-  const { roomID, updateNewMsg } = props
+  const { room, updateNewMsg } = props
 
   const HandleMsgText = (text) => {
     setMsgText(text)
@@ -43,7 +43,10 @@ const NewMsgField = (props) => {
       author: modAuthor,
       text: modMsgText,
     }
-    const newMsgID = await putNewMsg(roomID, newMsg)
+    const newMsgID = await putNewMsg(room.id, newMsg)
+    if (room.type == 'DM') {
+      updateDMLastActivity(room.id)
+    }
     updateNewMsg(newMsgID)
     // Reset input field
     setMsgText('')
