@@ -26,16 +26,15 @@ const SignUp = (props) => {
   }
 
   const handleSubmit = async () => {
+    setErrorCode('')
+    setErrorMessage('')
     // VALIDATION HERE
     if (passwordText !== repeatPasswordText) {
       setRepeatError('Password and Repeat Password must be identical')
       return
     }
     const user = await firebaseSignUp(emailText, passwordText)
-    if (user.uid) {
-      setErrorCode('')
-      setErrorMessage('')
-    } else {
+    if (!user.uid) {
       setErrorCode(user.code)
       setErrorMessage(user.msg)
     }

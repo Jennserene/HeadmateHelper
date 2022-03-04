@@ -15,12 +15,12 @@ const CreateSystem = (props) => {
   }
 
   const SubmitSystem = async () => {
+    setError(null)
     if (systemName == '') {
       setError('Your system name can not be blank.')
       return
     }
     await putInitSystemData(systemName)
-    setError(null)
     props.initializeAccount() // set accountInit to true
   }
 

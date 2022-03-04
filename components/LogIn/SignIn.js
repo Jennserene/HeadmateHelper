@@ -20,12 +20,11 @@ const SignIn = (props) => {
   }
 
   const handleSubmit = async () => {
+    setErrorCode('')
+    setErrorMessage('')
     // VALIDATION HERE
     const user = await firebaseLogIn(emailText, passwordText)
-    if (user.uid) {
-      setErrorCode('')
-      setErrorMessage('')
-    } else {
+    if (!user.uid) {
       setErrorCode(user.code)
       setErrorMessage(user.msg)
     }
