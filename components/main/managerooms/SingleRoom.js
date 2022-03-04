@@ -11,7 +11,7 @@ const SingleRoom = (props) => {
   const { room, handleRoomDelete, handleRoomUpdate } = props
 
   const [editRoom, setEditRoom] = useState(false)
-  const [roomName, setRoomName] = useState(room.name)
+  const [roomName, setRoomName] = useState(room.roomName)
   const [error, setError] = useState('')
 
   // Add allPublicRooms and get allRooms by context
@@ -40,7 +40,7 @@ const SingleRoom = (props) => {
       setError('Room name can not be blank')
       return
     }
-    if (roomContext.allRooms.some( room => room.name === roomName)) {
+    if (roomContext.allRooms.some( room => room.roomName === roomName)) {
       setError('There is already a room by that name')
       return
     }
@@ -77,7 +77,7 @@ const SingleRoom = (props) => {
               <Text style={styles.ButtonText}>Delete</Text>
             </View>
           </Pressable>
-          <Text>{room.name}</Text>
+          <Text>{room.roomName}</Text>
         </View> : null }
       { editRoom ? 
         <View style={styles.RoomView}>

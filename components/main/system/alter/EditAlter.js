@@ -1,14 +1,15 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
-import Context from '../../../../Context'
-import { updateAlter } from '../../../../Firebase';
+import Context, {RoomContext} from '../../../../Context'
+import { updateAlter, updateRoomName } from '../../../../Firebase';
 import AlterField from './AlterField'
 
 const EditAlter = (props) => {
 
   const context = useContext(Context)
+  const roomContext = useContext(RoomContext)
 
-  const { alterData, toggleAlterView, renameAlter, reproxyAlter, handleAlterData } = props
+  const { alterData, toggleAlterView, renameAlter, reproxyAlter, handleAlterData, handleRoomUpdate } = props
 
   const [alterObj, setAlterObj] = useState({...alterData})
   const [nameError, setNameError] = useState(null)
@@ -70,24 +71,38 @@ const EditAlter = (props) => {
     return true
   }
 
-  const renameAlterInDMs = () => {
-    // Rename alter in local DMs
-    // Rename alter in DMs in firestore
+  const changeDMNameOnAlterNameChange = (newAlterName) => {
+    const oldAlterName = context.front.name
+    const allDMsRaw = roomContext.allRooms.filter(room => room.type == 'DM')
+    const myDMs = allDMsRaw.filter(room => {
+      for (const id of room.participants) {
+        if (id == context.front.id) {
+          return true
+    }}})
+    for (const DM of myDMs) {
+      oldDM = {...DM}
+      const regularExp = new RegExp(oldAlterName, "g")
+      newRoomName = DM.roomName.replace(regularExp, newAlterName)
+      if (newRoomName !== oldDM.roomName ) {
+        updateRoomName(DM.id, newRoomName)
+        handleRoomUpdate(DM.id, newRoomName)
+      }
+    }
   }
   
   const handleSubmit = async () => {
+    setNameError('')
     const nameValidated = handleNameValidation() // Check if name is blank or a duplicate
     if (!nameValidated) {return} // If name fails validation then exit function
     // Handle submit
     await updateAlter(alterData.id, alterObj)
     if (alterObj.name !== context.front.name) {
+      changeDMNameOnAlterNameChange(alterObj.name)
       renameAlter(alterObj.name)
-      renameAlterInDMs(alterObj.id, alterObj.name)
     }
     if (alterObj.proxy !== context.front.proxy) {
       reproxyAlter(alterObj.proxy)
     }
-    setNameError('')
     handleAlterData(alterObj)
     toggleAlterView('view')
   }

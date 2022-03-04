@@ -9,7 +9,7 @@ const Alter = (props) => {
 
   const context = useContext(Context)
 
-  const { alter, toggleSystemView, renameAlter, reproxyAlter } = props
+  const { alter, toggleSystemView, renameAlter, reproxyAlter, handleRoomUpdate } = props
 
   const [alterView, setAlterView] = useState('view')
   const [alterData, setAlterData] = useState(null)
@@ -50,7 +50,8 @@ const Alter = (props) => {
                                                   toggleAlterView={toggleAlterView} 
                                                   renameAlter={renameAlter} 
                                                   reproxyAlter={reproxyAlter}
-                                                  handleAlterData={handleAlterData} /> }
+                                                  handleAlterData={handleAlterData}
+                                                  handleRoomUpdate={handleRoomUpdate} /> }
     </View>
   );
 }

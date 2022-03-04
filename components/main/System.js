@@ -11,7 +11,7 @@ const System = (props) => {
 
   const context = useContext(Context)
 
-  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro, updateLocalSystem, openDM } = props
+  const { renameAlter, reproxyAlter, newAlterIntro, updateNewAlterIntro, updateLocalSystem, openDM, handleRoomUpdate } = props
 
   const [systemView, setSystemView] = useState('view')
   const [alterFocus, setAlterFocus] = useState(null)
@@ -38,7 +38,8 @@ const System = (props) => {
                                       alter={alterFocus} 
                                       toggleSystemView={toggleSystemView} 
                                       renameAlter={renameAlter} 
-                                      reproxyAlter={reproxyAlter} /> }
+                                      reproxyAlter={reproxyAlter}
+                                      handleRoomUpdate={handleRoomUpdate} /> }
         { (systemView == 'intro') && <Intro 
                                         newAlterIntro={newAlterIntro} 
                                         updateNewAlterIntro={updateNewAlterIntro} 

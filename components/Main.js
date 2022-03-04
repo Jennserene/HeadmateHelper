@@ -106,7 +106,7 @@ const Main = (props) => {
     let roomArr = [...allRooms]
     for (let i = 0; i < roomArr.length; i++) {
       if (roomArr[i].id == roomID) {
-        roomArr[i].name = roomName
+        roomArr[i].roomName = roomName
         break
       }
     }
@@ -173,6 +173,8 @@ const Main = (props) => {
     handleRoomChange(newRoomObj)
   }
 
+  
+
   // Use useCallback to memoize functions to pass them down through context
 
   return (
@@ -192,7 +194,8 @@ const Main = (props) => {
                                       newAlterIntro={newAlterIntro} 
                                       updateNewAlterIntro={updateNewAlterIntro}
                                       updateLocalSystem={updateLocalSystem}
-                                      openDM={openDM} /> }
+                                      openDM={openDM}
+                                      handleRoomUpdate={handleRoomUpdate} /> }
               { nav == 'reminders' && <Reminders /> }
               { nav == 'diary' && <Diary /> }
               { nav == 'settings' && <Settings  

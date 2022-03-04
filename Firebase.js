@@ -313,6 +313,7 @@ export const deleteRoom = async (roomID) => {
 }
 
 // used in ./components/main/managerooms/SingleRoom.js in handleSubmit()
+// and ./components/main/system/alter/EditAlter.js in changeDMNameOnAlterNameChange()
 export const updateRoomName = async (roomID, roomName) => {
   try {
     const roomRef = doc(db, `users/${userUID}/rooms`, roomID)
