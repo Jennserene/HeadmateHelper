@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
-import Context from '../Context'
+import Context, {RoomContext} from '../Context'
 import { getAllRooms, putDMNewRoom } from '../Firebase.js'
 
 // Import components
@@ -36,7 +36,8 @@ const Main = (props) => {
           newAlterIntro, 
           updateNewAlterIntro,
           updateLocalSettings,
-          updateLocalSystem, } = props
+          updateLocalSystem,
+          closeMenus, } = props
 
   // set state on mount
   useEffect( () => {
@@ -50,10 +51,32 @@ const Main = (props) => {
     getStateOnMount()
   }, [])
 
+  // useEffect( () => {
+  //   const getAvailRooms = () => {
+  //     // Get only the rooms that this alter has access to
+  //   }
+  // }, [context.front.id])
+
+  useEffect( () => {
+    const checkRoomAccessOnSwitch = () => {
+      if (!currentRoom) {return}
+      if (!(nav == 'chat') || !(currentRoom.type == 'DM')) {return}
+      // const numParticipants = currentRoom.participants.length
+      const IDs = currentRoom.participants.map( (alter) => alter.id )
+      // for (let a = 0; a < numParticipants; a++) { // Get all the IDs of participants
+      //   IDs.push(currentRoom.participants[a].id)
+      // }
+      if (IDs.includes(context.front.id)) {return}
+      const allPublicRooms = allRooms.filter( room => room.type == 'public' )
+      handleRoomChange(allPublicRooms[0])
+    }
+    checkRoomAccessOnSwitch()
+  }, [context.front.id])
+
   // Run this every time someone navigates to a different page.
   const handleNav = (page) => {
     setNav(page)
-    toggleMainMenu()
+    closeMenus()
   }
 
   const toggleLoading = () => {
@@ -68,7 +91,7 @@ const Main = (props) => {
   const handleRoomChange = (room) => {
     setCurrentRoom(room)
     setNav('chat')
-    toggleMainMenu()
+    closeMenus()
   }
 
   // Delete a room from allRooms
@@ -107,20 +130,21 @@ const Main = (props) => {
     const numParticipants = alters.length
     const allDMs = allRooms.filter( room => room.type == 'DM' )
     const rightLengthDMs = allDMs.filter( room => room.participants.length == numParticipants)
-    for (let i = 0; i < rightLengthDMs.length; i++) {
+    for (let i = 0; i < rightLengthDMs.length; i++) { // For each DM
       let correctDM = true
-      const IDs = []
-      for (let a = 0; a < numParticipants; a++) {
-        IDs.push(rightLengthDMs[i].participants[a].id)
-      }
-      for (let a = 0; a < numParticipants; a++) {
-        if (!IDs.includes(alters[a].id)) {
+      const IDs = rightLengthDMs[i].participants.map( (alter) => alter.id)
+      // for (let a = 0; a < numParticipants; a++) { // Get all the IDs of participants
+      //   IDs.push(rightLengthDMs[i].participants[a].id)
+      // }
+      // for loop needed to check if every participant is inside IDs
+      for (let a = 0; a < numParticipants; a++) { // For each participant
+        if (!IDs.includes(alters[a].id)) { // Check if that participant is contained within IDs
           correctDM = false
           break
         }
       }
       if (correctDM) {
-        handleRoomChange(foundDM)
+        handleRoomChange(rightLengthDMs[i])
         return
       }
     }
@@ -144,59 +168,65 @@ const Main = (props) => {
         newRoomName = newRoomName + ', ' + alter.name
       }
     }
+    const newRoomObj = {
+      name: newRoomName, 
+      id: roomID, 
+      type: 'DM', 
+      lastActivity: (mostRecentTime + 1000),
+      participants: alters,
+    }
     let roomArr = [...allRooms]
-    roomArr.push({
-                  name: newRoomName, 
-                  id: roomID, 
-                  type: 'DM', 
-                  lastActivity: (mostRecentTime + 1000),
-                  participants: alters,
-                })
+    roomArr.push(newRoomObj)
     setAllRooms(roomArr)
+    handleRoomChange(newRoomObj)
   }
+
+  // Use useCallback to memoize functions to pass them down through context
 
   return (
     <View style={styles.MainView}>
       { loading ? 
         <LoadingScreen /> :
-        <View style={styles.MainView}>
-          <View style={styles.ContentView}>
-            { (nav == 'chat' && currentRoom) && <Chat currentRoom={currentRoom} /> }
-            { nav == 'system' && <System 
-                                    renameAlter={renameAlter} 
-                                    reproxyAlter={reproxyAlter} 
-                                    newAlterIntro={newAlterIntro} 
-                                    updateNewAlterIntro={updateNewAlterIntro}
-                                    updateLocalSystem={updateLocalSystem}
-                                    openDM={openDM} /> }
-            { nav == 'reminders' && <Reminders /> }
-            { nav == 'diary' && <Diary /> }
-            { nav == 'settings' && <Settings  
-                                      updateLocalSettings={updateLocalSettings} /> }
-            { nav == 'about' && <About /> }
-            { nav == 'manageRooms' && <ManageRooms 
-                                        allRooms={allRooms} 
-                                        handleRoomDelete={handleRoomDelete} 
-                                        handleRoomUpdate={handleRoomUpdate}
-                                        handleRoomAdd={handleRoomAdd} />}
+        <RoomContext.Provider value={{ // set global state
+          allRooms: allRooms,
+          currentRoom: currentRoom,
+        }}>
+          <View style={styles.MainView}>
+            <View style={styles.ContentView}>
+              { (nav == 'chat' && currentRoom) && <Chat/> }
+              { nav == 'system' && <System 
+                                      renameAlter={renameAlter} 
+                                      reproxyAlter={reproxyAlter} 
+                                      newAlterIntro={newAlterIntro} 
+                                      updateNewAlterIntro={updateNewAlterIntro}
+                                      updateLocalSystem={updateLocalSystem}
+                                      openDM={openDM} /> }
+              { nav == 'reminders' && <Reminders /> }
+              { nav == 'diary' && <Diary /> }
+              { nav == 'settings' && <Settings  
+                                        updateLocalSettings={updateLocalSettings} /> }
+              { nav == 'about' && <About /> }
+              { nav == 'manageRooms' && <ManageRooms 
+                                          handleRoomDelete={handleRoomDelete} 
+                                          handleRoomUpdate={handleRoomUpdate}
+                                          handleRoomAdd={handleRoomAdd} />}
+            </View>
+            { (switchMenuOpen && context.allAlters) && 
+                <SwitchMenu 
+                  style={styles.SwitchMenu} 
+                  toggleSwitchMenu={toggleSwitchMenu}
+                  addAlter={addAlter}
+                  makeAlterFront={makeAlterFront}
+                  newAlterIntro={newAlterIntro} /> }
+            { mainMenuOpen && 
+                <MainMenu 
+                  style={styles.MainMenu} 
+                  toggleMainMenu={toggleMainMenu}  
+                  logOut={logOut} 
+                  handleNav={handleNav} 
+                  handleRoomChange={handleRoomChange}/> }
           </View>
-          { (switchMenuOpen && context.allAlters) && 
-              <SwitchMenu 
-                style={styles.SwitchMenu} 
-                toggleSwitchMenu={toggleSwitchMenu}
-                addAlter={addAlter}
-                makeAlterFront={makeAlterFront}
-                newAlterIntro={newAlterIntro} /> }
-          { mainMenuOpen && 
-              <MainMenu 
-                style={styles.MainMenu} 
-                toggleMainMenu={toggleMainMenu}  
-                logOut={logOut} 
-                handleNav={handleNav} 
-                allRooms={allRooms} 
-                handleRoomChange={handleRoomChange}/> }
-        </View>
-      }
+        </RoomContext.Provider>}
     </View>
   )
 }

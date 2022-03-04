@@ -8,7 +8,7 @@ const MainMenu = (props) => {
 
   const context = useContext(Context)
 
-  const { toggleMainMenu, logOut, handleNav, allRooms, handleRoomChange } = props
+  const { toggleMainMenu, logOut, handleNav, handleRoomChange } = props
 
   // Close the switch menu
   const MainToggle = () => {
@@ -30,10 +30,8 @@ const MainMenu = (props) => {
           </View>
           <View style={styles.RightMenuView}>
             <MainMenuRight 
-            allRooms={allRooms}
-            handleRoomChange={handleRoomChange} 
-            toggleMainMenu={toggleMainMenu}
-            handleNav={handleNav} />
+              handleRoomChange={handleRoomChange}
+              handleNav={handleNav} />
           </View>
         </View>
       </View>

@@ -8,8 +8,6 @@ const AlterSelection = (props) => {
 
   const { alter, viewAlter, openDM } = props
 
-  const [alterID, setAlterID] = useState(alter.id)
-
   const handleView = () => {
     viewAlter(alter)
   }
@@ -18,14 +16,26 @@ const AlterSelection = (props) => {
     await openDM([context.front, alter])
   }
 
+  const shouldDMBeAvail = () => {
+    if (alter.id == context.front.id) {
+      return false
+    }
+    if (alter.id == 'unknown') {
+      return false
+    }
+    return true
+  }
+
   return (
     <View style={styles.Container}>
       <Pressable style={styles.ViewProfPressable} onPress={ () => {handleView()}}>
         <Text>View Profile</Text>
       </Pressable>
-      <Pressable style={styles.DMPressable} onPress={ () => {handleOpenDM()}}>
-        <Text>DM</Text>
-      </Pressable>
+      <View style={styles.DMContainer}>
+        { shouldDMBeAvail() && <Pressable style={styles.DMPressable} onPress={ () => {handleOpenDM()}}>
+          <Text>DM</Text>
+        </Pressable>}
+      </View>
       <Text style={styles.AlterText}>{alter.name}</Text>
     </View>
   );
@@ -50,7 +60,11 @@ const styles = StyleSheet.create({
     width: 40,
     alignItems: 'center',
     justifyContent: 'center',
+    
+  },
+  DMContainer: {
     marginLeft: 10,
+    width: 40
   },
   AlterText: {
     paddingLeft: 10,

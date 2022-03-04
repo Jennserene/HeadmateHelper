@@ -1,14 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { View, Text, StyleSheet } from 'react-native'
 import NewMsgField from './chat/NewMsgField';
-import Context from '../../Context'
+import {RoomContext} from '../../Context'
 import ChatHistory from './chat/ChatHistory';
 
 const Chat = (props) => {
 
-  const context = useContext(Context)
-
-  const { currentRoom } = props
+  const roomContext = useContext(RoomContext)
 
   const [newMsg, setNewMsg] = useState(null)
 
@@ -18,12 +16,12 @@ const Chat = (props) => {
 
   return (
     <View style={styles.chatView}>
-      <Text>{currentRoom.name}</Text>
+      <Text>{roomContext.currentRoom.name}</Text>
       <View style={styles.displayMsgs}>
-        { currentRoom && <ChatHistory roomID={currentRoom.id} newMsg={newMsg} /> }
+        { roomContext.currentRoom && <ChatHistory newMsg={newMsg} /> }
       </View>
       <View style={styles.msgFieldView}>
-        <NewMsgField updateNewMsg={updateNewMsg} room={currentRoom} />
+        <NewMsgField updateNewMsg={updateNewMsg} />
       </View>
     </View>
   );

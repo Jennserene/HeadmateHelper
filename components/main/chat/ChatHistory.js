@@ -1,14 +1,14 @@
 import React, { useState, useContext, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
-import Context from '../../../Context'
+import {RoomContext} from '../../../Context'
 import { getNewMsg, getInitChatQuery, getMoreChatQuery, getLastChatSnapShot } from '../../../Firebase'
 
 const ChatHistory = (props) => {
 
-  const context = useContext(Context)
+  const roomContext = useContext(RoomContext)
   const flatlistRef = useRef()
 
-  const { roomID, newMsg } = props
+  const { newMsg } = props
 
   const [refreshing, setRefreshing] = useState(false)
   const [limit, setLimit] = useState(30)
@@ -21,7 +21,7 @@ const ChatHistory = (props) => {
       if (newMsg) {
         // trimLength()
         flatlistRef.current.scrollToOffset({animating: true, offset: 0})
-        const msg = await getNewMsg(roomID, newMsg)
+        const msg = await getNewMsg(roomContext.currentRoom.id, newMsg)
         if (documentData) {
           setDocumentData([msg, ...documentData])
         } else {
@@ -37,27 +37,27 @@ const ChatHistory = (props) => {
     // Retrieve Data
     retrieveData = async () => {
       setLoading(true)
-      const chatData = await getInitChatQuery(roomID, limit)
+      const chatData = await getInitChatQuery(roomContext.currentRoom.id, limit)
       // const chatData = reversedChatData.reverse()
       if (chatData.length > 0) {
-        const lastChatSnap = await getLastChatSnapShot(roomID, chatData[chatData.length - 1].id)
+        const lastChatSnap = await getLastChatSnapShot(roomContext.currentRoom.id, chatData[chatData.length - 1].id)
         setDocumentData(chatData)
         setLastSnapShot(lastChatSnap)
       }
       setLoading(false)
     };
     retrieveData()
-  }, [roomID])
+  }, [roomContext.currentRoom.id])
 
   // Retrieve More
   const retrieveMore = async () => {
     if (documentData.length < limit) {return}
     // console.log('Retrieving more chat data')
     setRefreshing(true)
-    const moreChatDataReversed = await getMoreChatQuery(roomID, limit, lastSnapShot)
+    const moreChatDataReversed = await getMoreChatQuery(roomContext.currentRoom.id, limit, lastSnapShot)
     const moreChatData = moreChatDataReversed.reverse()
     if (moreChatData.length > 0) {
-      const lastChatSnap = await getLastChatSnapShot(roomID, moreChatData[moreChatData.length - 1].id)
+      const lastChatSnap = await getLastChatSnapShot(roomContext.currentRoom.id, moreChatData[moreChatData.length - 1].id)
       // setDocumentData([...moreChatData, ...documentData])
       setDocumentData([...documentData, ...moreChatData])
       setLastSnapShot(lastChatSnap)

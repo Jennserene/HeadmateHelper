@@ -135,6 +135,12 @@ const App = () => {
     setSwitchMenuOpen(false)
   }
 
+  // Make sure both menus are closed
+  const closeMenus = () => {
+    setMainMenuOpen(false)
+    setSwitchMenuOpen(false)
+  }
+
   // Add alter to allAlters
   const addAlter = (alter) => {
     let alters = allAlters
@@ -234,7 +240,8 @@ const App = () => {
                                   newAlterIntro={newAlterIntro} 
                                   updateNewAlterIntro={updateNewAlterIntro} 
                                   updateLocalSettings={updateLocalSettings}
-                                  updateLocalSystem={updateLocalSystem} /> }
+                                  updateLocalSystem={updateLocalSystem}
+                                  closeMenus={closeMenus} /> }
             </View>
           </Context.Provider>
         }

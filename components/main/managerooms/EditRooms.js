@@ -1,25 +1,27 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
-import Context from '../../../Context'
+import Context, {RoomContext} from '../../../Context'
 import { putNewPublicRoom } from '../../../Firebase'
 import SingleRoom from './SingleRoom'
 
 const EditRooms = (props) => {
 
   const context = useContext(Context)
+  const roomContext = useContext(RoomContext)
 
   const [addRoom, setAddRoom] = useState(false)
   const [newRoomName, setNewRoomName] = useState('')
   const [error, setError] = useState('')
 
-  const { allRooms, handleRoomDelete, handleRoomUpdate, handleRoomAdd } = props
+  const { handleRoomDelete, handleRoomUpdate, handleRoomAdd } = props
+
+  const allPublicRooms = roomContext.allRooms.filter( room => room.type == 'public' )
 
   const printRooms = () => {
-    return allRooms.map( (room) => {
+    return allPublicRooms.map( (room) => {
       return <SingleRoom 
                 key={room.id}
                 room={room} 
-                allRooms={allRooms}
                 handleRoomDelete={handleRoomDelete}
                 handleRoomUpdate={handleRoomUpdate} />
     })
@@ -39,7 +41,7 @@ const EditRooms = (props) => {
       setError('Room name can not be blank')
       return
     }
-    if (allRooms.includes(newRoomName)) {
+    if (roomContext.allRooms.includes(newRoomName)) {
       setError('There is already a room by that name')
       return
     }

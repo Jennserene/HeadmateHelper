@@ -16,6 +16,7 @@ const EditAlter = (props) => {
   const fields = [
     {label: 'Name', fieldName: 'name', multiline: false},
     {label: 'Proxy', fieldName: 'proxy', multiline: false},
+    {label: 'Pronouns', fieldName: 'pronouns', multiline: false},
     {label: 'Age', fieldName: 'age', multiline: false},
     {label: 'Birthday', fieldName: 'birthday', multiline: false},
     {label: 'Arrival Day', fieldName: 'arrivalDay', multiline: false},
@@ -68,18 +69,20 @@ const EditAlter = (props) => {
     }
     return true
   }
+
+  const renameAlterInDMs = () => {
+    // Rename alter in local DMs
+    // Rename alter in DMs in firestore
+  }
   
   const handleSubmit = async () => {
-
     const nameValidated = handleNameValidation() // Check if name is blank or a duplicate
-    if (!nameValidated) { // If name fails validation then exit function
-      return
-    }
-    
+    if (!nameValidated) {return} // If name fails validation then exit function
     // Handle submit
     await updateAlter(alterData.id, alterObj)
     if (alterObj.name !== context.front.name) {
       renameAlter(alterObj.name)
+      renameAlterInDMs(alterObj.id, alterObj.name)
     }
     if (alterObj.proxy !== context.front.proxy) {
       reproxyAlter(alterObj.proxy)

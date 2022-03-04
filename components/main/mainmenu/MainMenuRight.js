@@ -1,13 +1,14 @@
 import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import { setRoomTypePublic } from '../../../Firebase'
-import Context from '../../../Context'
+import Context, {RoomContext} from '../../../Context'
 
 const MainMenuRight = (props) => {
 
   const context = useContext(Context)
+  const roomContext = useContext(RoomContext)
 
-  const { allRooms, handleRoomChange, toggleMainMenu, handleNav } = props
+  const { handleRoomChange, handleNav } = props
 
   const changeRoom = (room) => {
     handleRoomChange(room)
@@ -15,15 +16,15 @@ const MainMenuRight = (props) => {
 
   const publicRoomsFilter = (room) => {
     if (room.type == undefined) { // TEMP - in case room does not have type
-      setRoomTypePublic(room.id)
+      setRoomTypePublic(room.id) // Firebase.js
       return true
     }
     if (room.type == 'public') {return true}
   }
 
   const printAllRooms = () => {
-    if (allRooms) {
-      const allPublicRooms = allRooms.filter(publicRoomsFilter)
+    if (roomContext.allRooms) {
+      const allPublicRooms = roomContext.allRooms.filter(publicRoomsFilter)
       return allPublicRooms.map( (room) => {
         return <View key={room.id} style={styles.LinkView}>
         <Pressable 
@@ -41,14 +42,13 @@ const MainMenuRight = (props) => {
   }
 
   const printRecentDMs = () => {
-    if (allRooms) {
-      const allDMsRaw = allRooms.filter(room => room.type == 'DM')
+    if (roomContext.allRooms) {
+      const allDMsRaw = roomContext.allRooms.filter(room => room.type == 'DM')
       const myDMs = allDMsRaw.filter(room => {
         for (const alter of room.participants) {
           if (alter.id == context.front.id) {
             return true
-          }
-        }})
+      }}})
       myDMs.sort((a, b) => (a.lastActivity < b.lastActivity ? 1 : -1))
       return myDMs.map( (room) => {
         return <View key={room.id} style={styles.LinkView}>

@@ -25,10 +25,11 @@ const Alter = (props) => {
   // If front changes while editing, return to view
   useEffect( () => {
     const watchForFrontChange = () => {
+      if (alter.id == context.front.id) {return} // if ID did not change, don't change alterView
       setAlterView('view')
     }
     watchForFrontChange()
-  }, [context.front.name])
+  }, [context.front.id])
 
   const toggleAlterView = (page) => {
     setAlterView(page)

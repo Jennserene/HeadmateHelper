@@ -1,17 +1,36 @@
 import React, { useEffect, useState, useContext } from 'react'
 import { View, Text, StyleSheet } from 'react-native'
+import Context, {RoomContext} from '../../../Context'
 import SingleRoom from './SingleRoom'
 
 const EditDMs = (props) => {
+
+  const context = useContext(Context)
+  const roomContext = useContext(RoomContext)
   
-  const { allRooms, handleRoomDelete, handleRoomUpdate } = props
+  const { handleRoomDelete, handleRoomUpdate } = props
+  
+  const [ allDMs, setAllDMs ] = useState(null)
+
+  useEffect( () => {
+    const getState = () => {
+      const allDMsRaw = roomContext.allRooms.filter(room => room.type == 'DM')
+      const myDMs = allDMsRaw.filter(room => {
+        for (const alter of room.participants) {
+          if (alter.id == context.front.id) {
+            return true
+      }}})
+      setAllDMs(myDMs)
+    }
+    getState()
+  }, [context.front.id])
+  
 
   const printRooms = () => {
-    return allRooms.map( (room) => {
+    return allDMs.map( (room) => {
       return <SingleRoom 
                 key={room.id}
                 room={room} 
-                allRooms={allRooms}
                 handleRoomDelete={handleRoomDelete}
                 handleRoomUpdate={handleRoomUpdate} />
     })
@@ -20,7 +39,7 @@ const EditDMs = (props) => {
   return (
     <View style={styles.ContainerView}>
       <View style={styles.DMsListView}>
-        { printRooms() }
+        { allDMs && printRooms() }
       </View>
     </View>
   );
