@@ -16,8 +16,8 @@ const EditDMs = (props) => {
     const getState = () => {
       const allDMsRaw = roomContext.allRooms.filter(room => room.type == 'DM')
       const myDMs = allDMsRaw.filter(room => {
-        for (const alter of room.participants) {
-          if (alter.id == context.front.id) {
+        for (const id of room.participants) {
+          if (id == context.front.id) {
             return true
       }}})
       setAllDMs(myDMs)

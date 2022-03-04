@@ -30,9 +30,9 @@ const MainMenuRight = (props) => {
         <Pressable 
             onPress={ () => {changeRoom(room)}}
             accessible={true} 
-            accessibilityLabel={`Open the ${room.name} room.`}
+            accessibilityLabel={`Open the ${room.roomName} room.`}
             accessibilityRole="button">
-          <Text style={styles.LinkText}>{room.name}</Text>
+          <Text style={styles.LinkText}>{room.roomName}</Text>
         </Pressable>
       </View>
       })
@@ -45,8 +45,8 @@ const MainMenuRight = (props) => {
     if (roomContext.allRooms) {
       const allDMsRaw = roomContext.allRooms.filter(room => room.type == 'DM')
       const myDMs = allDMsRaw.filter(room => {
-        for (const alter of room.participants) {
-          if (alter.id == context.front.id) {
+        for (const id of room.participants) {
+          if (id == context.front.id) {
             return true
       }}})
       myDMs.sort((a, b) => (a.lastActivity < b.lastActivity ? 1 : -1))
@@ -55,9 +55,9 @@ const MainMenuRight = (props) => {
         <Pressable 
             onPress={ () => {changeRoom(room)}}
             accessible={true} 
-            accessibilityLabel={`Open the ${room.name} DM.`}
+            accessibilityLabel={`Open the ${room.roomName} DM.`}
             accessibilityRole="button">
-          <Text style={styles.LinkText}>{room.name}</Text>
+          <Text style={styles.LinkText}>{room.roomName}</Text>
         </Pressable>
       </View>
       })

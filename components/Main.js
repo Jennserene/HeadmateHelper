@@ -61,12 +61,7 @@ const Main = (props) => {
     const checkRoomAccessOnSwitch = () => {
       if (!currentRoom) {return}
       if (!(nav == 'chat') || !(currentRoom.type == 'DM')) {return}
-      // const numParticipants = currentRoom.participants.length
-      const IDs = currentRoom.participants.map( (alter) => alter.id )
-      // for (let a = 0; a < numParticipants; a++) { // Get all the IDs of participants
-      //   IDs.push(currentRoom.participants[a].id)
-      // }
-      if (IDs.includes(context.front.id)) {return}
+      if (currentRoom.participants.includes(context.front.id)) {return}
       const allPublicRooms = allRooms.filter( room => room.type == 'public' )
       handleRoomChange(allPublicRooms[0])
     }
@@ -132,13 +127,9 @@ const Main = (props) => {
     const rightLengthDMs = allDMs.filter( room => room.participants.length == numParticipants)
     for (let i = 0; i < rightLengthDMs.length; i++) { // For each DM
       let correctDM = true
-      const IDs = rightLengthDMs[i].participants.map( (alter) => alter.id)
-      // for (let a = 0; a < numParticipants; a++) { // Get all the IDs of participants
-      //   IDs.push(rightLengthDMs[i].participants[a].id)
-      // }
       // for loop needed to check if every participant is inside IDs
       for (let a = 0; a < numParticipants; a++) { // For each participant
-        if (!IDs.includes(alters[a].id)) { // Check if that participant is contained within IDs
+        if (!rightLengthDMs[i].participants.includes(alters[a].id)) { // Check if that participant is contained within IDs
           correctDM = false
           break
         }
@@ -168,12 +159,13 @@ const Main = (props) => {
         newRoomName = newRoomName + ', ' + alter.name
       }
     }
+    const participants = alters.map( (alter) => alter.id)
     const newRoomObj = {
-      name: newRoomName, 
+      roomName: newRoomName, 
       id: roomID, 
       type: 'DM', 
       lastActivity: (mostRecentTime + 1000),
-      participants: alters,
+      participants: participants,
     }
     let roomArr = [...allRooms]
     roomArr.push(newRoomObj)

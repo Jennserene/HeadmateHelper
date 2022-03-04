@@ -20,7 +20,7 @@ const AlterSelection = (props) => {
     if (alter.id == context.front.id) {
       return false
     }
-    if (alter.id == 'unknown') {
+    if (context.front.id == 'unknown') {
       return false
     }
     return true

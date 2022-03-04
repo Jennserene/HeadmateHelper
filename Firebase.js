@@ -123,11 +123,8 @@ export const getAllRooms = async () => {
     querySnapshot.forEach((doc) => {
       const roomObj = doc.data()
       roomData.push({
-        name: roomObj.roomName,
         id: doc.id,
-        type: roomObj.type,
-        participants: roomObj.participants,
-        lastActivity: roomObj.lastActivity,
+        ...roomObj
       })
     })
     return roomData
@@ -418,11 +415,12 @@ export const putDMNewRoom = async (alters) => {
         newRoomName = newRoomName + ', ' + alter.name
       }
     }
+    const participants = alters.map( (alter) => alter.id)
     const newRoom = {
       roomName: newRoomName,
       createdAt: serverTimestamp(),
       type: 'DM',
-      participants: alters,
+      participants: participants,
       lastActivity: serverTimestamp(),
     }
     const roomsRef = collection(db, `users/${userUID}/rooms`)

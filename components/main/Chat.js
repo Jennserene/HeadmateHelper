@@ -16,7 +16,7 @@ const Chat = (props) => {
 
   return (
     <View style={styles.chatView}>
-      <Text>{roomContext.currentRoom.name}</Text>
+      <Text>{roomContext.currentRoom.roomName}</Text>
       <View style={styles.displayMsgs}>
         { roomContext.currentRoom && <ChatHistory newMsg={newMsg} /> }
       </View>
