@@ -13,14 +13,25 @@ const AlterSelection = (props) => {
   }
 
   const handleOpenDM = async () => {
+    if (context.front.id == alter.id) {
+      await openDM([context.front])
+      return
+    }
     await openDM([context.front, alter])
   }
 
   const shouldDMBeAvail = () => {
-    if (alter.id == context.front.id) {
+    // if (alter.id == context.front.id) {
+    //   return false
+    // }
+    if (context.front.id == 'unknown') {
       return false
     }
-    if (context.front.id == 'unknown') {
+    return true
+  }
+
+  const DMorSelf = () => {
+    if (alter.id == context.front.id) {
       return false
     }
     return true
@@ -33,7 +44,7 @@ const AlterSelection = (props) => {
       </Pressable>
       <View style={styles.DMContainer}>
         { shouldDMBeAvail() && <Pressable style={styles.DMPressable} onPress={ () => {handleOpenDM()}}>
-          <Text>DM</Text>
+          { DMorSelf() ? <Text>DM</Text> : <Text>Self</Text> }
         </Pressable>}
       </View>
       <Text style={styles.AlterText}>{alter.name}</Text>

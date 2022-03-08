@@ -15,6 +15,8 @@ import Diary from './main/Diary'
 import ManageRooms from './main/ManageRooms'
 import LoadingScreen from './LoadingScreen'
 
+import { formatNewDMName } from "../Utils"
+
 const Main = (props) => {
 
   const context = useContext(Context)
@@ -116,7 +118,7 @@ const Main = (props) => {
   // Add a room to allRooms
   const handleRoomAdd = (roomName, roomID) => {
     let roomArr = [...allRooms]
-    roomArr.push({name: roomName, id: roomID, type: 'public'})
+    roomArr.push({roomName: roomName, id: roomID, type: 'public'})
     setAllRooms(roomArr)
   }
 
@@ -151,14 +153,7 @@ const Main = (props) => {
   const handleDMAdd = (roomID, alters) => {
     const allDMs = allRooms.filter( room => room.type == 'DM' )
     const mostRecentTime = Math.max.apply(Math, allDMs.map( (obj) => { return obj.lastActivity; } ))
-    let newRoomName = ''
-    for (alter of alters) {
-      if (newRoomName == '') {
-        newRoomName = alter.name
-      } else {
-        newRoomName = newRoomName + ', ' + alter.name
-      }
-    }
+    let newRoomName = formatNewDMName(alters)
     const participants = alters.map( (alter) => alter.id)
     const newRoomObj = {
       roomName: newRoomName, 

@@ -32,6 +32,8 @@ import {
           signOut 
         } from "firebase/auth"
 
+import { formatNewDMName } from "./Utils"
+
 const db = getFirestore()
 
 // const auth = getAuth()
@@ -287,7 +289,7 @@ export const putNewMsg = async (roomID, newMsgRaw) => {
 }
 
 // used in ./components/main/managerooms/EditRooms.js in handleSubmit()
-export const putPublicNewRoom = async (newRoomName) => {
+export const putNewPublicRoom = async (newRoomName) => {
   try {
     const newRoom = {
       roomName: newRoomName,
@@ -298,7 +300,7 @@ export const putPublicNewRoom = async (newRoomName) => {
     const docSnap = await addDoc(roomsRef, newRoom)
     return docSnap.id
   } catch (err) {
-    console.log('ERROR in putPublicNewRoom:', err)
+    console.log('ERROR in putNewPublicRoom:', err)
   }
 }
 
@@ -408,14 +410,7 @@ export const setRoomTypePublic = async (roomID) => {
 // used in ./components/main/managerooms/Main.js in createDM()
 export const putDMNewRoom = async (alters) => {
   try {
-    let newRoomName = ''
-    for (alter of alters) {
-      if (newRoomName == '') {
-        newRoomName = alter.name
-      } else {
-        newRoomName = newRoomName + ', ' + alter.name
-      }
-    }
+    let newRoomName = formatNewDMName(alters)
     const participants = alters.map( (alter) => alter.id)
     const newRoom = {
       roomName: newRoomName,
