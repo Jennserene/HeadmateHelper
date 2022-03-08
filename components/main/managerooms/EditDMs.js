@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native'
 import Context, {RoomContext} from '../../../Context'
 import SingleRoom from './SingleRoom'
 
+// This component is used in components/main/ManageRoom.js
 const EditDMs = (props) => {
 
   const context = useContext(Context)

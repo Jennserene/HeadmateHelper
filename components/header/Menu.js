@@ -1,6 +1,7 @@
 import React from 'react'
 import { Image, Pressable, StyleSheet } from 'react-native'
 
+// This component is used in components/Header.js
 const Menu = (props) => {
 
   const { toggleMainMenu } = props

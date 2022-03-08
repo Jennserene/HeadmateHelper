@@ -4,6 +4,7 @@ import SwitchMenuContents from './switchmenu/SwitchMenuContents'
 import SwitchMenuIntro from './switchmenu/SwitchMenuIntro';
 import SwitchMenuNewAlter from './switchmenu/SwitchMenuNewAlter'
 
+// This component is used in components/Main.js
 const SwitchMenu = (props) => {
 
   const [menuState, setMenuState] = useState('choose')

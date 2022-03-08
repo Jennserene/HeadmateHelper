@@ -4,6 +4,7 @@ import Context, {RoomContext} from '../../../../Context'
 import { updateAlter, updateRoomName } from '../../../../Firebase';
 import AlterField from './AlterField'
 
+// This component is used in components/main/system/Alter.js
 const EditAlter = (props) => {
 
   const context = useContext(Context)

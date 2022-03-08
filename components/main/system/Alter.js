@@ -5,6 +5,7 @@ import ViewAlter from './alter/ViewAlter'
 import EditAlter from './alter/EditAlter'
 import { getAlter } from '../../../Firebase';
 
+// This component is used in components/main/System.js
 const Alter = (props) => {
 
   const context = useContext(Context)

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-nativ
 import {RoomContext} from '../../../Context'
 import { getNewMsg, getInitChatQuery, getMoreChatQuery, getLastChatSnapShot } from '../../../Firebase'
 
+// This component is used in components/main/Chat.js
 const ChatHistory = (props) => {
 
   const roomContext = useContext(RoomContext)

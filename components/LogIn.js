@@ -4,6 +4,7 @@ import Authenticate from './LogIn/Authenticate'
 import CreateSystem from './LogIn/CreateSystem'
 import Context from '../Context'
 
+// This component is used in App.js
 const LogIn = (props) => {
 
   const context = useContext(Context)

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 
+// This component is used in components/Main.js
 const Diary = (props) => {
   return (
     <View>

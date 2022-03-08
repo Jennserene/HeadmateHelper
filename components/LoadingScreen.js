@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator } from 'react-native'
 
+// This component is used in App.js
 const LoadingScreen = (props) => {
   return (
     <View style={styles.LoadingContainer}>

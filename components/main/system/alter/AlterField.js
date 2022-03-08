@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 
+// This component is used in components/main/system/alter/EditAlter.js
 const AlterField = (props) => {
 
   const {label, fieldName, content, handleFieldUpdate, multi, nameError} = props

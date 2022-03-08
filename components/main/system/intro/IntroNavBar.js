@@ -1,6 +1,7 @@
 import React from 'react';
 import { Pressable, Text, StyleSheet, View, Linking } from 'react-native';
 
+// This component is used in components/main/system/Intro.js
 const IntroNavBar = (props) => {
 
   const { introNav, saveContents, handleIntroNav, introStatus, toggleSystemView } = props

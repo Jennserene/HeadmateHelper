@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect } from 'react'
 import { View, Text, StyleSheet } from 'react-native';
 
-
+// Not used in any component, perhaps this should be used in ChatHistory.js
 const ChatMsg = (props) => {
 
   const { text, author } = props.message

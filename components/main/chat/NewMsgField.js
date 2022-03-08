@@ -3,6 +3,7 @@ import { View, Text, Pressable, TextInput, StyleSheet } from 'react-native';
 import Context, {RoomContext} from '../../../Context'
 import { putNewMsg, updateDMLastActivity } from '../../../Firebase'
 
+// This component is used in components/main/Chat.js
 const NewMsgField = (props) => {
 
   const context = useContext(Context)

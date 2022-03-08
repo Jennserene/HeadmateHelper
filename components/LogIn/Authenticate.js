@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable } from 'react-native'
 import SignIn from './SignIn'
 import SignUp from './SignUp'
 
+// This component is used in components/LogIn.js
 const Authenticate = (props) => {
 
   const [ signingUp, setSigningUp ] = useState(false)

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 
+// This component is used in components/Header.js
 const Switch = (props) => {
 
   const { toggleSwitchMenu } = props

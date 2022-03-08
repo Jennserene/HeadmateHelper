@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import Context from '../../../../Context'
 
+// This component is used in components/main/system/Alter.js
 const ViewAlter = (props) => {
 
   const context = useContext(Context)

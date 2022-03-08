@@ -4,6 +4,7 @@ import { RoomContext } from '../../Context'
 import EditRooms from './managerooms/EditRooms'
 import EditDMs from './managerooms/EditDMs'
 
+// This component is used in components/Main.js
 const ManageRooms = (props) => {
 
   // const roomContext = useContext(RoomContext)

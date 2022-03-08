@@ -4,6 +4,7 @@ import Menu from './header/Menu'
 import Switch from './header/Switch'
 import Context from '../Context'
 
+// This component is used in App.js
 const Header = (props) => {
 
   const context = useContext(Context)

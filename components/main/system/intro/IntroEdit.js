@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, TextInput, Keyboard } from 'react-native';
 
+// This component is used in components/main/system/Intro.js
 const IntroEdit = (props) => {
 
   const [textInputHeight, setTextInputHeight] = useState(100)

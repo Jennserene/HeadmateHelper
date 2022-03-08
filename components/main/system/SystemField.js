@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 
+// This component is used in components/main/system/EditSystem.js
 const SystemField = (props) => {
 
   const {label, fieldName, content, handleFieldUpdate, multi} = props

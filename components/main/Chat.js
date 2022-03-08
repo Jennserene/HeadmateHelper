@@ -4,6 +4,7 @@ import NewMsgField from './chat/NewMsgField';
 import {RoomContext} from '../../Context'
 import ChatHistory from './chat/ChatHistory';
 
+// This component is used in components/Main.js
 const Chat = (props) => {
 
   const roomContext = useContext(RoomContext)

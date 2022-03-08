@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import { firebaseLogIn } from '../../Firebase';
 
+// This component is used in components/LogIn/Authenticate.js
 const SignIn = (props) => {
 
   const [ emailText, setEmailText ] = useState('')

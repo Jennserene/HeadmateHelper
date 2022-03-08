@@ -17,6 +17,7 @@ import LoadingScreen from './LoadingScreen'
 
 import { formatNewDMName } from "../Utils"
 
+// This component is used in App.js
 const Main = (props) => {
 
   const context = useContext(Context)

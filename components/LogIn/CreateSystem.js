@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, Pressable } from 'react-native'
 import Context from '../../Context'
 import { putInitSystemData } from '../../Firebase'
 
+// This component is used in components/LogIn.js
 const CreateSystem = (props) => {
 
   const context = useContext(Context)

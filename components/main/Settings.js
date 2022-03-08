@@ -3,6 +3,7 @@ import { ScrollView, View, Text, StyleSheet, Pressable } from 'react-native'
 import Context from '../../Context'
 import { updateSettings } from '../../Firebase'
 
+// This component is used in components/Main.js
 const Settings = (props) => {
   
   const context = useContext(Context)

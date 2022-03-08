@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import Context, { RoomContext } from '../../../Context'
 import { updateRoomName, deleteRoom } from '../../../Firebase'
 
+// This component is used in components/main/managerooms/EditDMs.js
+// This component is used in components/main/managerooms/EditRooms.js
 const SingleRoom = (props) => {
 
   const context = useContext(Context)

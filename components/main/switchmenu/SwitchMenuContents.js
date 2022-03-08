@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import Context from '../../../Context';
 // import SwitchMenuPicker from './SwitchMenuPicker'
 
+// This component is used in components/main/SwitchMenu.js
 const SwitchMenuContents = (props) => {
 
   const context = useContext(Context)

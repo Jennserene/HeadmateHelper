@@ -4,6 +4,7 @@ import Context, {RoomContext} from '../../../Context'
 import { putNewPublicRoom } from '../../../Firebase'
 import SingleRoom from './SingleRoom'
 
+// This component is used in components/main/ManageRooms.js
 const EditRooms = (props) => {
 
   const context = useContext(Context)

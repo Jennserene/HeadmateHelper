@@ -7,6 +7,7 @@ import AlterList from './system/AlterList'
 import Alter from './system/Alter'
 import Intro from './system/Intro'
 
+// This component is used in components/Main.js
 const System = (props) => {
 
   const context = useContext(Context)

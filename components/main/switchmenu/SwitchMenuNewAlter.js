@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
 import Context from '../../../Context'
 import { putNewAlter } from '../../../Firebase';
 
+// This component is used in components/main/SwitchMenu.js
 const SwitchMenuNewAlter = (props) => {
   
   const context = useContext(Context)

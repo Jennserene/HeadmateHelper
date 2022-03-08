@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native'
 import Context from '../../../../Context'
 
+// This component is used in components/main/system/AlterList.js
 const AlterSelection = (props) => {
 
   const context = useContext(Context)

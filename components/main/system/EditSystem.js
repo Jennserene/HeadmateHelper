@@ -4,6 +4,7 @@ import Context from '../../../Context'
 import { updateSystem } from '../../../Firebase';
 import SystemField from './SystemField'
 
+// This component is used in components/main/System.js
 const EditSystem = (props) => {
 
   const context = useContext(Context)

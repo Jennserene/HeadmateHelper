@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native'
 import { setRoomTypePublic } from '../../../Firebase'
 import Context, {RoomContext} from '../../../Context'
 
+// This component is used in components/main/MainMenu.js
 const MainMenuRight = (props) => {
 
   const context = useContext(Context)

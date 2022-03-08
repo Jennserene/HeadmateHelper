@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, ScrollView, View, Text, Pressable } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view'
 
+// This component is used in components/main/SwitchMenu.js
 const SwitchMenuIntro = (props) => {
 
   const { toggleSwitchMenu, newAlterIntro } = props

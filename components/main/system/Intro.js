@@ -10,6 +10,7 @@ import ExplainMarkdown from './intro/ExplainMarkdown'
 import IntroView from './intro/IntroView'
 import IntroEdit from './intro/IntroEdit'
 
+// This component is used in components/main/System.js
 const Intro = (props) => {
 
   const context = useContext(Context)

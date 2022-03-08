@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import { MarkdownView } from 'react-native-markdown-view'
 
+// This component is used in components/main/system/Intro.js
 const IntroView = (props) => {
 
   const { introContents } = props

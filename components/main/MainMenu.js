@@ -4,6 +4,7 @@ import MainMenuLeft from './mainmenu/MainMenuLeft'
 import MainMenuRight from './mainmenu/MainMenuRight'
 import Context from '../../Context'
 
+// This component is used in components/Main.js
 const MainMenu = (props) => {
 
   const context = useContext(Context)
